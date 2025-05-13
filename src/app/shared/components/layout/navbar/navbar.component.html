@@ -1,0 +1,38 @@
+<nav class="navbar">
+    <div class="navbar-content">
+      <span class="app-title">Smartfix Samaná</span>
+  
+      <!-- Menú hamburguesa para móviles -->
+      <button class="menu-toggle" (click)="toggleMobileMenu()" aria-label="Abrir menú">
+        ☰
+      </button>
+  
+      <!-- Menú de navegación (pantallas grandes) -->
+      <div class="nav-links">
+        <a routerLink="/clientes" routerLinkActive="active-link">Clientes</a>
+        <a routerLink="/celulares" routerLinkActive="active-link">Celulares</a>
+        <a routerLink="/reparaciones" routerLinkActive="active-link">Reparaciones</a>
+        <a routerLink="/repuestos" routerLinkActive="active-link">Repuestos</a>
+      </div>
+  
+      <!-- Menú hamburguesa (pantallas pequeñas) -->
+      <div class="mobile-menu" [class.show]="mobileMenuOpen">
+        <a routerLink="/clientes" routerLinkActive="active-link">Clientes</a>
+        <a routerLink="/celulares" routerLinkActive="active-link">Celulares</a>
+        <a routerLink="/reparaciones" routerLinkActive="active-link">Reparaciones</a>
+        <a routerLink="/repuestos" routerLinkActive="active-link">Repuestos</a>
+      </div>
+  
+      <!-- Menú de perfil -->
+      <div class="profile-menu">
+        <button class="profile-icon" (click)="toggleProfileMenu()" aria-label="Abrir perfil">
+          👤
+        </button>
+        <div class="profile-dropdown" [class.show]="profileMenuOpen">
+          <button (click)="onLogin()">🔓 Iniciar sesión</button>
+          <button (click)="onLogout()">🔒 Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  

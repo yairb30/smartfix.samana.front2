@@ -1,9 +1,10 @@
-import { Client } from "./client";
+
+import { Customer } from "./customer";
 import { Phone } from "./phone";
 
 export class Repair {
     id!: number;
-    clientId!: Client;
+    customerId!: Customer;
     phoneId!: Phone;
     problem!: string;
     state!: string;
