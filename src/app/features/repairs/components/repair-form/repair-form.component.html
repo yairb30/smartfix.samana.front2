@@ -1,1 +1,48 @@
-<p>repair-form works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- Cliente -->
+  <label for="customerId">Cliente</label>
+  <select id="customerId" formControlName="customerId" required>
+    @for (customer of customers; track customer.id) {
+    <option [value]="customer.id">
+      {{ customer.name }} {{ customer.lastname }}
+    </option>
+    }
+  </select>
+  @if (form.get('customerId')?.invalid && form.get('customerId')?.touched) {
+  <div>El Cliente es requerido</div>
+  }
+
+  <!-- Celular -->
+  <label for="phoneId">Celular</label>
+  <select id="phoneId" formControlName="phoneId" required>
+    @for (phone of phones; track phone.id) {
+    <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
+    }
+  </select>
+  @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
+  <div>El celular es requerido</div>
+  }
+
+  <!-- Falla -->
+  <label for="fault">Falla</label>
+  <input id="fault" type="text" formControlName="fault" />
+  @if (form.get('fault')?.invalid && form.get('fault')?.touched) {
+  <div>La descripcion de la falla es requerida</div>
+  }
+  <!-- Estado -->
+  <label for="state">Estado</label>
+  <input id="state" type="text" formControlName="state" />
+  @if (form.get('state')?.invalid && form.get('state')?.touched) {
+  <div>El estado es requerido</div>
+  }
+
+  <!-- Fecha -->
+  <label for="date">Fecha</label>
+  <input id="date" type="date" formControlName="date" />
+    @if (form.get('date')?.invalid && form.get('date')?.touched) {
+    <div>La fecha es requerida</div>
+    }
+
+  <!-- Botón de envío -->
+  <button type="submit" [disabled]="form.invalid">Guardar</button>
+</form>

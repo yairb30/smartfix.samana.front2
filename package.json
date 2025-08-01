@@ -20,6 +20,7 @@
     "@angular/router": "^17.3.0",
     "rxjs": "~7.8.0",
     "smartfix-samana": "file:",
+    "sweetalert2": "^11.22.2",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

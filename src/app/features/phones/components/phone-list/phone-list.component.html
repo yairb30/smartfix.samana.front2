@@ -1,1 +1,59 @@
-<p>phone-list works!</p>
+<h2>Celulares</h2>
+
+<!-- Campo de búsqueda -->
+<input 
+  type="text" 
+  [formControl]="searchControl" 
+  placeholder="Buscar marca o modelo..." 
+/>
+@if(admin) {
+  <button (click)="create()">Nuevo Celular</button>
+}
+
+<!-- Tabla de celulares -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Marca</th>
+      <th>Modelo</th>
+      @if(admin) {
+        <th>Acciones</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (phone of phones; track $index) {
+      <tr>
+        <td>{{ phone.id }}</td>
+        <td>{{ phone.brand }}</td>
+        <td>{{ phone.model }}</td>
+        
+        <td>
+          @if(admin) {        
+            <button (click)="update(phone.id)">Actualizar</button>
+            <button (click)="delete(phone)">Eliminar</button>
+          }
+        </td>
+      </tr>
+    }
+    @if (phones.length === 0) {
+      <tr>
+        <td colspan="6">No hay celulares disponibles</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<!-- Paginación simple -->
+@if (totalPages > 1) {
+  <div>
+    @for (page of [].constructor(totalPages); track $index) {
+      <button 
+        (click)="goToPage($index)"
+        [disabled]="$index === currentPage">
+        {{ $index + 1 }}
+      </button>
+    }
+  </div>
+}

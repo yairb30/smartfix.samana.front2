@@ -1,6 +1,7 @@
 export class UserLogin {
-    id: number = 0;
+    id!: number;
+    username!: string;
     email!: string;
     password!: string;
-    username!: string;
+    admin: boolean = false;
 }

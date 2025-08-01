@@ -1,16 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { LoginComponent } from "./features/auth/login/login.component";
-import { NavbarComponent } from "./shared/components/layout/navbar/navbar.component";
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { DashboardComponent } from "./shared/components/layout/dashboard/dashboard.component";
+import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from './core/services/auth.service';
+import { LoginComponent } from './features/auth/login/login.component';
+import { SidebarComponent } from './shared/components/layout/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, NavbarComponent, HttpClientModule],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'smartfix-samana';
+  private authService = Inject(AuthService);
+
+  get isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+  
 }

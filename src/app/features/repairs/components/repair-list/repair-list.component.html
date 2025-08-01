@@ -1,0 +1,61 @@
+<h2>Reparaciones</h2>
+
+<!-- Campo de búsqueda -->
+<input
+  type="text"
+  [formControl]="searchControl"
+  placeholder="Buscar por celular o cliente..."
+/>
+@if (admin) {
+  <button (click)="create()">Nueva Reparación</button>
+}
+
+<!-- Tabla de clientes -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cliente</th>
+      <th>Celular</th>
+      <th>Falla</th>
+      <th>Estado</th>
+      <th>Fecha</th>
+      @if (admin) {
+        <th>Acciones</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (repair of repairs; track $index) {
+    <tr>
+      <td>{{ repair.id }}</td>
+      <td>{{ repair.customer.name }} {{ repair.customer.lastname }}</td>
+      <td>{{ repair.phone.brand }} {{ repair.phone.model }}</td>
+      <td>{{ repair.fault }}</td>
+      <td>{{ repair.state }}</td>
+      <td>{{ repair.date | date : "dd-MM-yyyy" }}</td>
+      <td>
+        @if (admin) {
+          <button (click)="update(repair.id)">Actualizar</button>
+          <button (click)="delete(repair)">Eliminar</button>
+        }
+      </td>
+    </tr>
+    } @if (repairs.length === 0) {
+    <tr>
+      <td colspan="6">No hay reparaciones disponibles</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+<!-- Paginación simple -->
+@if (totalPages > 1) {
+<div>
+  @for (page of [].constructor(totalPages); track $index) {
+  <button (click)="goToPage($index)" [disabled]="$index === currentPage">
+    {{ $index + 1 }}
+  </button>
+  }
+</div>
+}

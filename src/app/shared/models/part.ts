@@ -3,6 +3,6 @@ import { Phone } from "./phone";
 
 export class Part {
     id!: number;
-    phoneId!: Phone;
-    partCatalogId!: PartCatalog;
+    phone!: Phone; 
+    partCatalog!: PartCatalog; 
 }

@@ -1,0 +1,73 @@
+<div [class.sidebar-collapsed]="isSidebarCollapsed">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="sidebar-header">
+      <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+      @if (!isSidebarCollapsed) {
+        <h2 class="app-title">Smartfix Samaná</h2>
+      }
+    </div>
+
+    <nav>
+      <a routerLink="dashboard-home" routerLinkActive="active-link">
+        📇 
+        @if (!isSidebarCollapsed) {
+          <span>Inicio</span>
+        }
+      </a>
+      <a routerLink="customers" routerLinkActive="active-link">
+        📇 
+        @if (!isSidebarCollapsed) {
+          <span>Clientes</span>
+        }
+      </a>
+      <a routerLink="phones" routerLinkActive="active-link">
+        📱 
+        @if (!isSidebarCollapsed) {
+          <span>Celulares</span>
+        }
+      </a>
+      <a routerLink="repairs" routerLinkActive="active-link">
+        🛠 
+        @if (!isSidebarCollapsed) {
+          <span>Reparaciones</span>
+        }
+      </a>
+      <a routerLink="parts" routerLinkActive="active-link">
+        🔩 
+        @if (!isSidebarCollapsed) {
+          <span>Repuestos</span>
+        }
+      </a>
+    </nav>
+
+    <div class="profile-section">
+      @if (!isSidebarCollapsed) {
+        <p>{{ username }}</p>
+      }
+
+      <button (click)="toggleProfileMenu()">👤 
+        @if (!isSidebarCollapsed) {
+          <span>Perfil</span>
+        }
+      </button>
+
+      <div class="profile-dropdown" [class.show]="profileMenuOpen">
+        <button (click)="onLogout()">🔒 
+          @if (!isSidebarCollapsed) {
+            <span>Cerrar sesión</span>
+          }
+        </button>
+
+        @if (admin) {
+          <button (click)="onRegister()">🧑‍💼 
+            @if (!isSidebarCollapsed) {
+              <span>Crear usuarios</span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </aside> 
+  <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+

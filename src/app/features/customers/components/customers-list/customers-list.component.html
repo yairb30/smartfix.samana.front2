@@ -1,1 +1,61 @@
-<p>customers-list works!</p>
+<h2>Clientes</h2>
+<!-- Campo de búsqueda -->
+<input 
+  type="text" 
+  [formControl]="searchControl" 
+  placeholder="Buscar clientes..." 
+/>
+@if(admin) {
+  <button (click)="create()">Nuevo Cliente</button>
+}
+
+<!-- Tabla de clientes -->
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Teléfono</th>
+      <th>Email</th>
+      @if(admin) {
+        <th>Acciones</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (customer of customers; track $index) {
+      <tr>
+        <td>{{ customer.id }}</td>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.lastname }}</td>
+        <td>{{ customer.phone }}</td>
+        <td>{{ customer.email }}</td>
+        <td>
+          @if(admin) {        
+            <button (click)="update(customer.id)">Actualizar</button>
+            <button (click)="delete(customer)">Eliminar</button>
+          }
+        </td>
+      </tr>
+    }
+    @if (customers.length === 0) {
+      <tr>
+        <td colspan="6">No hay clientes disponibles</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<!-- Paginación simple -->
+@if (totalPages > 1) {
+  <div>
+    @for (page of [].constructor(totalPages); track $index) {
+      <button 
+        (click)="goToPage($index)"
+        [disabled]="$index === currentPage">
+        {{ $index + 1 }}
+      </button>
+    }
+  </div>
+}

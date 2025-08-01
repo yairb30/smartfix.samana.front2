@@ -1,0 +1,13 @@
+.dashboard-layout {
+  display: flex;
+  height: 100vh; /* Ocupa toda la altura de la pantalla */
+}
+
+
+
+.main-content {
+  flex: 1; /* Ocupa todo el espacio restante */
+  padding: 20px;
+  background-color: #f5f5f5; /* Fondo del contenido principal */
+  overflow-y: auto;
+}

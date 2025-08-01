@@ -1,0 +1,58 @@
+<h2>Repuestos</h2>
+
+<!-- Campo de búsqueda -->
+<input 
+  type="text" 
+  [formControl]="searchControl" 
+  placeholder="Buscar por celular o repuesto..." 
+/>
+@if (admin) {
+  <button (click)="create()">Nuevo Repuesto</button>
+}
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Celular</th>
+      <th>Repuesto</th>
+      @if (admin) {
+        <th>Acciones</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (part of parts; track $index) {
+      <tr>
+        <td>{{ part.id }}</td>
+        <td>{{part.phone.brand }} {{part.phone.model }}</td>
+        <td>{{part.partCatalog.name }}</td>
+        <td>
+          @if (admin) {        
+            <button (click)="update(part.id)">Actualizar</button>
+            <button (click)="delete(part)">Eliminar</button>
+          }
+        </td>
+      </tr>
+    }
+    @if (parts.length === 0) {
+      <tr>
+        <td colspan="6">No hay repuestos disponibles</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<!-- Paginación simple -->
+@if (totalPages > 1) {
+  <div>
+    @for (page of [].constructor(totalPages); track $index) {
+      <button 
+        (click)="goToPage($index)"
+        [disabled]="$index === currentPage">
+        {{ $index + 1 }}
+      </button>
+    }
+  </div>
+}
+

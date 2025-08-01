@@ -4,9 +4,9 @@ import { Phone } from "./phone";
 
 export class Repair {
     id!: number;
-    customerId!: Customer;
-    phoneId!: Phone;
-    problem!: string;
+    customer!: Customer; 
+    phone!: Phone;
+    fault!: string;
     state!: string;
     date!: Date;
 }

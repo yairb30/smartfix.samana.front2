@@ -1,1 +1,33 @@
-<p>customers-form works!</p>
+<h2>{{ isEditMode ? "Editar Cliente" : "Nuevo Cliente" }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label>
+    Nombre:
+    <input type="text" formControlName="name" />
+  </label>
+  @if (form.get('name')?.invalid && form.get('name')?.touched) {
+  <div>El nombre es requerido</div>
+  }
+
+  <label>
+    Apellido:
+    <input type="text" formControlName="lastname" />
+  </label>
+  @if (form.get('lastname')?.invalid && form.get('lastname')?.touched) {
+  <div>El apellido es requerido</div>
+  }
+
+  <label>
+    Teléfono:
+    <input type="tel" formControlName="phone" />
+  </label>
+
+  <label>
+    Email:
+    <input type="email" formControlName="email" />
+  </label>
+
+  <button type="submit" [disabled]="form.invalid">
+    {{ isEditMode ? "Actualizar" : "Guardar" }}
+  </button>
+</form>

@@ -1,1 +1,23 @@
-<p>phone-form works!</p>
+<h2>{{ isEditMode ? "Editar Celular" : "Nuevo Celular" }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label>
+    Marca:
+    <input type="text" formControlName="brand" />
+  </label>
+  @if (form.get('brand')?.invalid && form.get('brand')?.touched) {
+  <div>La marca es requerida</div>
+  }
+
+  <label>
+    Modelo:
+    <input type="text" formControlName="model" />
+  </label>
+  @if (form.get('model')?.invalid && form.get('model')?.touched) {
+  <div>El modelo es requerido</div>
+  }
+
+  <button type="submit" [disabled]="form.invalid">
+    {{ isEditMode ? "Actualizar" : "Guardar" }}
+  </button>
+</form>

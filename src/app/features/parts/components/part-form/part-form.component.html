@@ -1,1 +1,25 @@
-<p>part-form works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <!-- Celular -->
+  <label for="phoneId">Celular</label>
+  <select id="phoneId" formControlName="phoneId" required>
+    @for (phone of phones; track phone.id) {
+    <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
+    }
+  </select>
+  @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
+  <div>El celular es requerido</div>
+  }
+  <!-- Repuesto -->
+  <label for="partCatalogId">Repuesto</label>
+  <select id="partCatalogId" formControlName="partCatalogId" required>
+    @for (partCatalog of partsCatalog; track partCatalog.id) {
+    <option [value]="partCatalog.id">{{ partCatalog.name }}</option>
+    }
+  </select>
+  @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
+  <div>El repuesto es requerido</div>
+  }
+
+  <!-- Botón de envío -->
+  <button type="submit" [disabled]="form.invalid">Guardar</button>
+</form>

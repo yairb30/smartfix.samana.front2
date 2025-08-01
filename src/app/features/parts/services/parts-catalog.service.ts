@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PartCatalog } from '../../shared/models/part-catalog';
+import { PartCatalog } from '../../../shared/models/part-catalog';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PartsCatalogService {
+export class PartCatalogService {
 
   private partCatalogUrl: string = 'http://localhost:8080/parts_catalog';
 
