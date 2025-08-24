@@ -72,7 +72,7 @@ export class PartFormComponent {
             title: 'Repuesto actualizado',
             text: 'El repuesto se ha actualizado correctamente.',
           });
-          this.router.navigate(['/parts']);
+          this.router.navigate(['/dashboard/parts']);
         });
       } else {
         this.partService.createPart(partDto).subscribe(() => {
@@ -81,9 +81,23 @@ export class PartFormComponent {
             title: 'Repuesto agregado',
             text: 'El repuesto se ha agregado correctamente.',
           });
-          this.router.navigate(['/parts']);
+          this.router.navigate(['/dashboard/parts']);
         });
       }
+    }
+    cancel(): void{
+      this.router.navigate(['/dashboard/parts'])
+    }
+
+    // Métodos helper para el template
+    getSelectedPhone(): Phone | undefined {
+      const phoneId = this.form.get('phoneId')?.value;
+      return this.phones.find(phone => phone.id === phoneId);
+    }
+
+    getSelectedPart(): PartCatalog | undefined {
+      const partCatalogId = this.form.get('partCatalogId')?.value;
+      return this.partsCatalog.find(part => part.id === partCatalogId);
     }
   
 

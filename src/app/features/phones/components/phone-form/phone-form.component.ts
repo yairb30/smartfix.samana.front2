@@ -58,7 +58,7 @@ export class PhoneFormComponent implements OnInit {
             title: 'Teléfono actualizado',
             text: 'El teléfono se ha actualizado correctamente.'
           });
-          this.router.navigate(['/phones']);
+          this.router.navigate(['/dashboard/phones']);
         });
       } else {
         this.phoneService.createPhone(phone).subscribe(() => {
@@ -67,10 +67,13 @@ export class PhoneFormComponent implements OnInit {
             title: 'Teléfono agregado',
             text: 'El teléfono se ha agregado correctamente.'
           });
-          this.router.navigate(['/phones']);
+          this.router.navigate(['/dashboard/phones']);
         });
       }
     }
+    cancel(): void{
+      this.router.navigate(['/dashboard/phones'])
+    } 
   
 
 }

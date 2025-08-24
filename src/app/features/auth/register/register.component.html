@@ -1,66 +1,106 @@
-<h2>Registro</h2>
-<form [formGroup]="form" (ngSubmit)="register()">
-  <label>Username:</label>
-  <input
-    type="text"
-    formControlName="username"
-    [class.is-invalid]="
-      form.get('username')?.invalid && form.get('username')?.touched
-    "
-  />
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <div class="register-icon">📝</div>
+      <h2 class="register-title">Crear Cuenta</h2>
+      <p class="register-subtitle">Únete a SmartFix Samaná</p>
+    </div>
 
-  <!-- Mensajes de validación para username -->
-  @if (form.get('username')?.invalid && form.get('username')?.touched) {
-  <div class="invalid-feedback">
-    @if (form.get('username')?.errors?.['required']) {
-    <div>El nombre de usuario es obligatorio</div>
-    } @if (form.get('username')?.errors?.['minlength']) {
-    <div>El nombre de usuario debe contener al menos cuatro caracteres</div>
-    }
+    <form [formGroup]="form" (ngSubmit)="register()" class="register-form">
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">👤</span>
+          Nombre de Usuario
+        </label>
+        <input
+          type="text"
+          formControlName="username"
+          class="form-input"
+          [class.is-invalid]="form.get('username')?.invalid && form.get('username')?.touched"
+          placeholder="Ingresa tu nombre de usuario"
+        />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <div class="error-message">
+            @if (form.get('username')?.errors?.['required']) {
+              <span class="error-icon">⚠️</span>
+              El nombre de usuario es obligatorio
+            } @if (form.get('username')?.errors?.['minlength']) {
+              <span class="error-icon">⚠️</span>
+              El nombre de usuario debe contener al menos cuatro caracteres
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">✉️</span>
+          Correo Electrónico
+        </label>
+        <input
+          type="email"
+          formControlName="email"
+          class="form-input"
+          [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+          placeholder="ejemplo@correo.com"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <div class="error-message">
+            @if (form.get('email')?.errors?.['required']) {
+              <span class="error-icon">⚠️</span>
+              El email es obligatorio
+            } @if (form.get('email')?.errors?.['email']) {
+              <span class="error-icon">⚠️</span>
+              Por favor ingrese un email válido
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">🔒</span>
+          Contraseña
+        </label>
+        <input
+          type="password"
+          formControlName="password"
+          class="form-input"
+          [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched"
+          placeholder="Crea una contraseña segura"
+        />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <div class="error-message">
+            @if (form.get('password')?.errors?.['required']) {
+              <span class="error-icon">⚠️</span>
+              La contraseña es obligatoria
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="admin" class="checkbox-input" />
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-text">
+            <span class="label-icon">👑</span>
+            ¿Es administrador?
+          </span>
+        </label>
+      </div>
+
+      <button type="submit" class="register-button" [disabled]="form.invalid">
+        <span class="button-icon">🚀</span>
+        Registrarse
+      </button>
+      
+      <div class="register-footer">
+        <p class="login-link">
+          ¿Ya tienes cuenta? 
+          <a routerLink="/login">Inicia sesión aquí</a>
+        </p>
+      </div>
+    </form>
   </div>
-  }
-
-  <label>Email:</label>
-  <input
-    type="email"
-    formControlName="email"
-    [class.is-invalid]="
-      form.get('email')?.invalid && form.get('email')?.touched
-    "
-  />
-
-  <!-- Mensajes de validación para email -->
-  @if (form.get('email')?.invalid && form.get('email')?.touched) {
-  <div class="invalid-feedback">
-    @if (form.get('email')?.errors?.['required']) {
-    <div>El email es obligatorio</div>
-    } @if (form.get('email')?.errors?.['email']) {
-    <div>Por favor ingrese un email válido</div>
-    }
-  </div>
-  }
-  <label>Password:</label>
-  <input
-    type="password"
-    formControlName="password"
-    [class.is-invalid]="
-      form.get('password')?.invalid && form.get('password')?.touched
-    "
-  />
-
-  <!-- Mensajes de validación para password -->
-  @if (form.get('password')?.invalid && form.get('password')?.touched) {
-  <div class="invalid-feedback">
-    @if (form.get('password')?.errors?.['required']) {
-    <div>La contraseña es obligatoria</div>
-    }
-  </div>
-  }
-
-  <label>
-    <input type="checkbox" formControlName="admin" />
-    ¿Es administrador?
-  </label>
-
-  <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Registrarse</button>
-</form>
+</div>

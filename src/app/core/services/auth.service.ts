@@ -4,20 +4,18 @@ import { Observable } from 'rxjs';
 import { UserLogin } from '../../shared/models/user-login';
 import { LoginRequest } from '../../shared/models/login-request';
 import { LoginResponse } from '../../shared/models/login-response';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private loginUrl = 'http://localhost:8080/auth/login';
-
-  private registerUrl = 'http://localhost:8080/userslogin';
+  private loginUrl = `${environment.apiUrl}/auth/login`;
+  private registerUrl = `${environment.apiUrl}/userslogin`;
 
   private _token: string | undefined;
   private _admin: boolean = false;
   private _username: string = '';
-  
-
 
   constructor(private http: HttpClient) {}
 
@@ -25,16 +23,14 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.loginUrl}`, credentials);
   }
 
-
-register(userLogin: UserLogin): Observable<UserLogin> {
-  const headers: any = {};
-
-  const token = this.token;
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+  register(userLogin: UserLogin): Observable<UserLogin> {
+    const headers: any = {};
+    const token = this.token;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return this.http.post<UserLogin>(`${this.registerUrl}`, userLogin, { headers });
   }
-  return this.http.post<UserLogin>(`${this.registerUrl}`, userLogin, { headers });
-}
 
   setLoginData(token: string, username: string, admin: boolean) {
     this._token = token;
@@ -46,17 +42,16 @@ register(userLogin: UserLogin): Observable<UserLogin> {
     sessionStorage.setItem('isAdmin', JSON.stringify(admin));
   }
 
-set token(token: string) {
-  this._token = token;
-  sessionStorage.setItem('token', token);
-}
+  set token(token: string) {
+    this._token = token;
+    sessionStorage.setItem('token', token);
+  }
 
-get token() {
-  if (this._token) return this._token;
-  this._token = sessionStorage.getItem('token') || '';
-  return this._token;
-}
-
+  get token() {
+    if (this._token) return this._token;
+    this._token = sessionStorage.getItem('token') || '';
+    return this._token;
+  }
 
   get username() {
     if (!this._username && sessionStorage.getItem('username')) {
@@ -65,11 +60,10 @@ get token() {
     return this._username;
   }
 
- isAdmin(): boolean {
-  const stored = sessionStorage.getItem('isAdmin');
-  return stored ? JSON.parse(stored) : false;
-}
-
+  isAdmin(): boolean {
+    const stored = sessionStorage.getItem('isAdmin');
+    return stored ? JSON.parse(stored) : false;
+  }
 
   logout(): void {
     sessionStorage.removeItem('token');

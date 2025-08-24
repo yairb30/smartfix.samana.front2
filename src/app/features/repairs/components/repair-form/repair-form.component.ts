@@ -86,7 +86,7 @@ export class RepairFormComponent implements OnInit {
             title: 'Reparación actualizada',
             text: 'La reparación se ha actualizado correctamente.',
           });
-          this.router.navigate(['/repairs']);
+          this.router.navigate(['/dashboard/repairs']);
         });
     } else {
       this.repairService.createRepair(repairDto).subscribe(() => {
@@ -95,8 +95,11 @@ export class RepairFormComponent implements OnInit {
           title: 'Reparación agregada',
           text: 'La reparación se ha agregado correctamente.',
         });
-        this.router.navigate(['/repairs']);
+        this.router.navigate(['/dashboard/repairs']);
       });
     }
+  }
+  cancel(): void{
+    this.router.navigate(['/dashboard/repairs'])
   }
 }

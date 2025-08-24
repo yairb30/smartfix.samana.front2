@@ -1,25 +1,117 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <!-- Celular -->
-  <label for="phoneId">Celular</label>
-  <select id="phoneId" formControlName="phoneId" required>
-    @for (phone of phones; track phone.id) {
-    <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
-    }
-  </select>
-  @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
-  <div>El celular es requerido</div>
-  }
-  <!-- Repuesto -->
-  <label for="partCatalogId">Repuesto</label>
-  <select id="partCatalogId" formControlName="partCatalogId" required>
-    @for (partCatalog of partsCatalog; track partCatalog.id) {
-    <option [value]="partCatalog.id">{{ partCatalog.name }}</option>
-    }
-  </select>
-  @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
-  <div>El repuesto es requerido</div>
-  }
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-icon">🔩</div>
+      <h2 class="form-title">{{ isEditMode ? "Editar Repuesto" : "Nuevo Repuesto" }}</h2>
+      <p class="form-subtitle">{{ isEditMode ? "Actualiza la información del repuesto" : "Registra un nuevo repuesto en el inventario" }}</p>
+    </div>
 
-  <!-- Botón de envío -->
-  <button type="submit" [disabled]="form.invalid">Guardar</button>
-</form>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="part-form">
+      <!-- Preview de compatibilidad -->
+      <div class="compatibility-preview">
+        <div class="preview-card">
+          <div class="preview-header">
+            <span class="preview-icon">🔗</span>
+            <h3>Compatibilidad</h3>
+          </div>
+          <div class="preview-content">
+            <div class="device-preview">
+              <div class="device-icon">📱</div>
+              <div class="device-name">
+                {{ getSelectedPhone()?.brand || 'Selecciona' }} {{ getSelectedPhone()?.model || 'un dispositivo' }}
+              </div>
+            </div>
+            <div class="compatibility-arrow">↔️</div>
+            <div class="part-preview">
+              <div class="part-icon">🔩</div>
+              <div class="part-name">
+                {{ getSelectedPart()?.name || 'Selecciona un repuesto' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información del repuesto -->
+      <div class="info-section">
+        <h3 class="section-title">
+          <span class="section-icon">📋</span>
+          Información del Repuesto
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="phoneId">
+              <span class="label-icon">📱</span>
+              Dispositivo Compatible
+            </label>
+            <select id="phoneId" formControlName="phoneId" class="form-select" required>
+              <option value="" disabled>Selecciona un dispositivo</option>
+              @for (phone of phones; track phone.id) {
+                <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
+              }
+            </select>
+            @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
+              <div class="error-message">
+                <span class="error-icon">⚠️</span>
+                El dispositivo es requerido
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="partCatalogId">
+              <span class="label-icon">🔩</span>
+              Tipo de Repuesto
+            </label>
+            <select id="partCatalogId" formControlName="partCatalogId" class="form-select" required>
+              <option value="" disabled>Selecciona un repuesto</option>
+              @for (partCatalog of partsCatalog; track partCatalog.id) {
+                <option [value]="partCatalog.id">{{ partCatalog.name }}</option>
+              }
+            </select>
+            @if (form.get('partCatalogId')?.invalid && form.get('partCatalogId')?.touched) {
+              <div class="error-message">
+                <span class="error-icon">⚠️</span>
+                El repuesto es requerido
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="info-card">
+          <div class="info-header">
+            <span class="info-icon">💡</span>
+            <h4>Información del Inventario</h4>
+          </div>
+          <div class="info-content">
+            <div class="info-item">
+              <span class="info-label">Dispositivo:</span>
+              <span class="info-value">{{ getSelectedPhone()?.brand || '--' }} {{ getSelectedPhone()?.model || '' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Repuesto:</span>
+              <span class="info-value">{{ getSelectedPart()?.name || '--' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Estado:</span>
+              <span class="info-value status-available">✅ Disponible para registro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">
+          <span class="btn-icon">❌</span>
+          Cancelar
+        </button>
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          <span class="btn-icon">{{ isEditMode ? "✏️" : "💾" }}</span>
+          {{ isEditMode ? "Actualizar" : "Guardar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

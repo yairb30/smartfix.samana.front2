@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Customer } from '../../../shared/models/customer';
+import { environment } from '../../../../environments/environment';
 
 
 @Injectable({
@@ -9,7 +10,8 @@ import { Customer } from '../../../shared/models/customer';
 })
 export class CustomerService {
 
-  private customertUrl: string = 'http://localhost:8080/customers';
+  private customertUrl = `${environment.apiUrl}/customers`;
+
 
   constructor(private http: HttpClient) {}
 

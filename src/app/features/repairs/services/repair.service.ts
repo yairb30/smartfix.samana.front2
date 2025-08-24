@@ -2,13 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Repair } from '../../../shared/models/repair';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RepairService {
 
-  private repairUrl: string = 'http://localhost:8080/repairs';
+  private repairUrl = `${environment.apiUrl}/repairs`;
 
   constructor(private http: HttpClient) {}
 

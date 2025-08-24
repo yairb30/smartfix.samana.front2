@@ -59,7 +59,7 @@ export class CustomersFormComponent implements OnInit {
           title: 'Cliente actualizado',
           text: 'El cliente se ha actualizado correctamente.'
         });
-        this.router.navigate(['/customers']);
+        this.router.navigate(['/dashboard/customers']);
       });
     } else {
       this.customerService.createCustomer(customer).subscribe(() => {
@@ -68,9 +68,12 @@ export class CustomersFormComponent implements OnInit {
           title: 'Cliente agregada',
           text: 'El cliente se ha agregado correctamente.'
         });
-        this.router.navigate(['/customers']);
+        this.router.navigate(['/dashboard/customers']);
       });
     }
+  }
+  cancel(): void{
+    this.router.navigate(['/dashboard/customers'])
   }
 
 }

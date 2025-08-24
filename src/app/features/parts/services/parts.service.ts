@@ -2,12 +2,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Part } from '../../../shared/models/part';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartService {
-  private partUrl: string = 'http://localhost:8080/parts';
+  private partUrl = `${environment.apiUrl}/parts`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,73 +1,127 @@
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" 
+     [class.show]="isMobileMenuOpen" 
+     (click)="closeMobileMenu()"></div>
+
+<!-- Mobile Header (visible only on mobile) -->
+<header class="mobile-header">
+  <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+  <h2 class="mobile-app-title">Smartfix Samaná</h2>
+  <div class="mobile-user-info">
+    <span class="mobile-username">{{ username }}</span>
+  </div>
+</header>
+
 <div [class.sidebar-collapsed]="isSidebarCollapsed">
   <!-- Sidebar -->
-  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
-    <div class="sidebar-header">
+  <aside class="sidebar" 
+         [class.collapsed]="isSidebarCollapsed"
+         [class.mobile-open]="isMobileMenuOpen">
+    
+    <!-- Desktop Header -->
+    <div class="sidebar-header desktop-only">
       <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
       @if (!isSidebarCollapsed) {
         <h2 class="app-title">Smartfix Samaná</h2>
       }
     </div>
 
-    <nav>
-      <a routerLink="dashboard-home" routerLinkActive="active-link">
-        📇 
-        @if (!isSidebarCollapsed) {
-          <span>Inicio</span>
-        }
+    <!-- Mobile Header Inside Sidebar -->
+    <div class="sidebar-header mobile-only">
+      <div class="mobile-sidebar-header">
+        <h2 class="app-title">Smartfix Samaná</h2>
+        <button class="close-mobile-menu" (click)="closeMobileMenu()">✕</button>
+      </div>
+      <div class="mobile-user-profile">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <span class="user-name">{{ username }}</span>
+          <span class="user-role">{{ admin ? 'Administrador' : 'Usuario' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="dashboard-home" 
+         routerLinkActive="active-link"
+         (click)="onMobileLinkClick()">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text" [class.d-none]="isSidebarCollapsed && !isMobileMenuOpen">Inicio</span>
       </a>
-      <a routerLink="customers" routerLinkActive="active-link">
-        📇 
-        @if (!isSidebarCollapsed) {
-          <span>Clientes</span>
-        }
+      <a routerLink="customers" 
+         routerLinkActive="active-link"
+         (click)="onMobileLinkClick()">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text" [class.d-none]="isSidebarCollapsed && !isMobileMenuOpen">Clientes</span>
       </a>
-      <a routerLink="phones" routerLinkActive="active-link">
-        📱 
-        @if (!isSidebarCollapsed) {
-          <span>Celulares</span>
-        }
+      <a routerLink="phones" 
+         routerLinkActive="active-link"
+         (click)="onMobileLinkClick()">
+        <span class="nav-icon">📱</span>
+        <span class="nav-text" [class.d-none]="isSidebarCollapsed && !isMobileMenuOpen">Celulares</span>
       </a>
-      <a routerLink="repairs" routerLinkActive="active-link">
-        🛠 
-        @if (!isSidebarCollapsed) {
-          <span>Reparaciones</span>
-        }
+      <a routerLink="repairs" 
+         routerLinkActive="active-link"
+         (click)="onMobileLinkClick()">
+        <span class="nav-icon">🛠️</span>
+        <span class="nav-text" [class.d-none]="isSidebarCollapsed && !isMobileMenuOpen">Reparaciones</span>
       </a>
-      <a routerLink="parts" routerLinkActive="active-link">
-        🔩 
-        @if (!isSidebarCollapsed) {
-          <span>Repuestos</span>
-        }
+      <a routerLink="parts" 
+         routerLinkActive="active-link"
+         (click)="onMobileLinkClick()">
+        <span class="nav-icon">🔩</span>
+        <span class="nav-text" [class.d-none]="isSidebarCollapsed && !isMobileMenuOpen">Repuestos</span>
       </a>
     </nav>
 
     <div class="profile-section">
-      @if (!isSidebarCollapsed) {
-        <p>{{ username }}</p>
-      }
-
-      <button (click)="toggleProfileMenu()">👤 
+      <!-- Desktop Profile Section -->
+      <div class="desktop-profile desktop-only">
         @if (!isSidebarCollapsed) {
-          <span>Perfil</span>
+          <p class="profile-username">{{ username }}</p>
         }
-      </button>
 
-      <div class="profile-dropdown" [class.show]="profileMenuOpen">
-        <button (click)="onLogout()">🔒 
-          @if (!isSidebarCollapsed) {
-            <span>Cerrar sesión</span>
-          }
+        <button class="profile-btn" (click)="toggleProfileMenu()">
+          <span class="profile-icon">👤</span>
+          <span class="profile-text" [class.d-none]="isSidebarCollapsed">Perfil</span>
         </button>
 
-        @if (admin) {
-          <button (click)="onRegister()">🧑‍💼 
-            @if (!isSidebarCollapsed) {
-              <span>Crear usuarios</span>
-            }
+        <div class="profile-dropdown" [class.show]="profileMenuOpen">
+          <button class="dropdown-btn logout-btn" (click)="onLogout()">
+            <span class="btn-icon">🔒</span>
+            <span class="btn-text" [class.d-none]="isSidebarCollapsed">Cerrar sesión</span>
           </button>
-        }
+
+          @if (admin) {
+            <button class="dropdown-btn register-btn" (click)="onRegister()">
+              <span class="btn-icon">🧑‍💼</span>
+              <span class="btn-text" [class.d-none]="isSidebarCollapsed">Crear usuarios</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Mobile Profile Section -->
+      <div class="mobile-profile mobile-only">
+        <div class="mobile-profile-actions">
+          @if (admin) {
+            <button class="mobile-action-btn" (click)="onRegister(); closeMobileMenu()">
+              <span class="btn-icon">🧑‍💼</span>
+              <span class="btn-text">Crear usuarios</span>
+            </button>
+          }
+          <button class="mobile-action-btn logout-btn" (click)="onLogout()">
+            <span class="btn-icon">🔒</span>
+            <span class="btn-text">Cerrar sesión</span>
+          </button>
+        </div>
       </div>
     </div>
-  </aside> 
-  <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+  </aside>
+</div>
+  
 

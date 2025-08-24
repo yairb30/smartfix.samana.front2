@@ -68,11 +68,11 @@ export class RepairListComponent implements OnInit {
   }
 
   create(): void {
-    this.router.navigate(['/repairs/new']);
+    this.router.navigate(['/dashboard/repairs/new']);
   }
 
   update(id: number): void {
-    this.router.navigate(['/repairs/edit', id]);
+    this.router.navigate(['/dashboard/repairs/edit', id]);
   }
   delete(repair: Repair): void {
     Swal.fire({

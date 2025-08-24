@@ -1,61 +1,116 @@
-<h2>Reparaciones</h2>
-
-<!-- Campo de búsqueda -->
-<input
-  type="text"
-  [formControl]="searchControl"
-  placeholder="Buscar por celular o cliente..."
-/>
-@if (admin) {
-  <button (click)="create()">Nueva Reparación</button>
-}
-
-<!-- Tabla de clientes -->
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Cliente</th>
-      <th>Celular</th>
-      <th>Falla</th>
-      <th>Estado</th>
-      <th>Fecha</th>
+<div class="repairs-container">
+  <div class="header-section">
+    <h2 class="page-title">
+      <span class="title-icon">🛠️</span>
+      Gestión de Reparaciones
+    </h2>
+    
+    <div class="header-actions">
+      <div class="search-container">
+        <input
+          type="text"
+          [formControl]="searchControl"
+          placeholder="Buscar por celular o cliente..."
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      
       @if (admin) {
-        <th>Acciones</th>
+        <button class="btn-primary" (click)="create()">
+          <span class="btn-icon">➕</span>
+          Nueva Reparación
+        </button>
       }
-    </tr>
-  </thead>
-  <tbody>
-    @for (repair of repairs; track $index) {
-    <tr>
-      <td>{{ repair.id }}</td>
-      <td>{{ repair.customer.name }} {{ repair.customer.lastname }}</td>
-      <td>{{ repair.phone.brand }} {{ repair.phone.model }}</td>
-      <td>{{ repair.fault }}</td>
-      <td>{{ repair.state }}</td>
-      <td>{{ repair.date | date : "dd-MM-yyyy" }}</td>
-      <td>
-        @if (admin) {
-          <button (click)="update(repair.id)">Actualizar</button>
-          <button (click)="delete(repair)">Eliminar</button>
-        }
-      </td>
-    </tr>
-    } @if (repairs.length === 0) {
-    <tr>
-      <td colspan="6">No hay reparaciones disponibles</td>
-    </tr>
-    }
-  </tbody>
-</table>
+    </div>
+  </div>
 
-<!-- Paginación simple -->
-@if (totalPages > 1) {
-<div>
-  @for (page of [].constructor(totalPages); track $index) {
-  <button (click)="goToPage($index)" [disabled]="$index === currentPage">
-    {{ $index + 1 }}
-  </button>
+  <!-- Cards de reparaciones -->
+  <div class="cards-container">
+    @for (repair of repairs; track $index) {
+      <div class="repair-card">
+        <div class="card-header">
+          <div class="repair-info">
+            <h3 class="repair-title">{{ repair.customer.name }} {{ repair.customer.lastname }}</h3>
+            <span class="repair-id">#{{ repair.id }}</span>
+          </div>
+          <div class="status-badge" [class]="'status-' + repair.state.toLowerCase().replace(' ', '-')">
+            {{ repair.state }}
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="device-info">
+            <div class="device-icon">📱</div>
+            <div class="device-details">
+              <h4>{{ repair.phone.brand }} {{ repair.phone.model }}</h4>
+              <p class="device-label">Dispositivo</p>
+            </div>
+          </div>
+          
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">
+                <span class="info-icon">⚠️</span>
+                Falla
+              </span>
+              <span class="info-value">{{ repair.fault }}</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">
+                <span class="info-icon">📅</span>
+                Fecha
+              </span>
+              <span class="info-value">{{ repair.date | date : "dd/MM/yyyy" }}</span>
+            </div>
+          </div>
+        </div>
+        
+        @if (admin) {
+          <div class="card-actions">
+            <button class="btn-edit" (click)="update(repair.id)">
+              <span class="btn-icon">✏️</span>
+              Editar
+            </button>
+            <button class="btn-delete" (click)="delete(repair)">
+              <span class="btn-icon">🗑️</span>
+              Eliminar
+            </button>
+          </div>
+        }
+      </div>
+    }
+    
+    @if (repairs.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">🔧</div>
+        <h3>No hay reparaciones disponibles</h3>
+        <p>Comienza registrando tu primera reparación</p>
+        @if (admin) {
+          <button class="btn-primary" (click)="create()">
+            <span class="btn-icon">➕</span>
+            Nueva Reparación
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Paginación -->
+  @if (totalPages > 1) {
+    <div class="pagination-container">
+      <div class="pagination">
+        @for (page of [].constructor(totalPages); track $index) {
+          <button 
+            class="pagination-btn"
+            [class.active]="$index === currentPage"
+            (click)="goToPage($index)"
+            [disabled]="$index === currentPage">
+            {{ $index + 1 }}
+          </button>
+        }
+      </div>
+    </div>
   }
 </div>
-}

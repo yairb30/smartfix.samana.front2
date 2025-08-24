@@ -64,11 +64,11 @@ export class PhoneListComponent {
     }
   
     create(): void {
-      this.router.navigate(['/phones/new']);
+      this.router.navigate(['/dashboard/phones/new']);
     }
   
     update(id: number): void {
-      this.router.navigate(['/phones/edit', id]);
+      this.router.navigate(['/dashboard/phones/edit', id]);
     }
     delete(phone: Phone): void {
       Swal.fire({

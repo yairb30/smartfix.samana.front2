@@ -63,11 +63,11 @@ export class CustomersListComponent implements OnInit {
   }
 
   create(): void {
-    this.router.navigate(['/customers/new']);
+    this.router.navigate(['/dashboard/customers/new']);
   }
 
   update(id: number): void {
-    this.router.navigate(['/customers/edit', id]);
+    this.router.navigate(['/dashboard/customers/edit', id]);
   }
   delete(customer: Customer): void {
       Swal.fire({

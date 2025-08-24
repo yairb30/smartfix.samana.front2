@@ -1,33 +1,90 @@
-<h2>{{ isEditMode ? "Editar Cliente" : "Nuevo Cliente" }}</h2>
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <div class="form-icon">👥</div>
+      <h2 class="form-title">{{ isEditMode ? "Editar Cliente" : "Nuevo Cliente" }}</h2>
+      <p class="form-subtitle">{{ isEditMode ? "Actualiza la información del cliente" : "Registra un nuevo cliente en el sistema" }}</p>
+    </div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <label>
-    Nombre:
-    <input type="text" formControlName="name" />
-  </label>
-  @if (form.get('name')?.invalid && form.get('name')?.touched) {
-  <div>El nombre es requerido</div>
-  }
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="customer-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">👤</span>
+            Nombre
+          </label>
+          <input 
+            type="text" 
+            formControlName="name" 
+            class="form-input"
+            placeholder="Ingresa el nombre"
+          />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <div class="error-message">
+              <span class="error-icon">⚠️</span>
+              El nombre es requerido
+            </div>
+          }
+        </div>
 
-  <label>
-    Apellido:
-    <input type="text" formControlName="lastname" />
-  </label>
-  @if (form.get('lastname')?.invalid && form.get('lastname')?.touched) {
-  <div>El apellido es requerido</div>
-  }
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">👤</span>
+            Apellido
+          </label>
+          <input 
+            type="text" 
+            formControlName="lastname" 
+            class="form-input"
+            placeholder="Ingresa el apellido"
+          />
+          @if (form.get('lastname')?.invalid && form.get('lastname')?.touched) {
+            <div class="error-message">
+              <span class="error-icon">⚠️</span>
+              El apellido es requerido
+            </div>
+          }
+        </div>
+      </div>
 
-  <label>
-    Teléfono:
-    <input type="tel" formControlName="phone" />
-  </label>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">📞</span>
+            Teléfono
+          </label>
+          <input 
+            type="tel" 
+            formControlName="phone" 
+            class="form-input"
+            placeholder="(809) 555-0123"
+          />
+        </div>
 
-  <label>
-    Email:
-    <input type="email" formControlName="email" />
-  </label>
+        <div class="form-group">
+          <label class="form-label">
+            <span class="label-icon">✉️</span>
+            Email
+          </label>
+          <input 
+            type="email" 
+            formControlName="email" 
+            class="form-input"
+            placeholder="cliente@ejemplo.com"
+          />
+        </div>
+      </div>
 
-  <button type="submit" [disabled]="form.invalid">
-    {{ isEditMode ? "Actualizar" : "Guardar" }}
-  </button>
-</form>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="cancel()">
+          <span class="btn-icon">❌</span>
+          Cancelar
+        </button>
+        <button type="submit" class="btn-submit" [disabled]="form.invalid">
+          <span class="btn-icon">{{ isEditMode ? "✏️" : "💾" }}</span>
+          {{ isEditMode ? "Actualizar" : "Guardar" }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

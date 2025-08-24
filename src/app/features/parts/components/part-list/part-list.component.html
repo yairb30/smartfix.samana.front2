@@ -1,58 +1,118 @@
-<h2>Repuestos</h2>
-
-<!-- Campo de búsqueda -->
-<input 
-  type="text" 
-  [formControl]="searchControl" 
-  placeholder="Buscar por celular o repuesto..." 
-/>
-@if (admin) {
-  <button (click)="create()">Nuevo Repuesto</button>
-}
-
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Celular</th>
-      <th>Repuesto</th>
+<div class="parts-container">
+  <div class="header-section">
+    <h2 class="page-title">
+      <span class="title-icon">🔩</span>
+      Inventario de Repuestos
+    </h2>
+    
+    <div class="header-actions">
+      <div class="search-container">
+        <input 
+          type="text" 
+          [formControl]="searchControl" 
+          placeholder="Buscar por celular o repuesto..." 
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      
       @if (admin) {
-        <th>Acciones</th>
+        <button class="btn-primary" (click)="create()">
+          <span class="btn-icon">➕</span>
+          Nuevo Repuesto
+        </button>
       }
-    </tr>
-  </thead>
-  <tbody>
-    @for (part of parts; track $index) {
-      <tr>
-        <td>{{ part.id }}</td>
-        <td>{{part.phone.brand }} {{part.phone.model }}</td>
-        <td>{{part.partCatalog.name }}</td>
-        <td>
-          @if (admin) {        
-            <button (click)="update(part.id)">Actualizar</button>
-            <button (click)="delete(part)">Eliminar</button>
-          }
-        </td>
-      </tr>
-    }
-    @if (parts.length === 0) {
-      <tr>
-        <td colspan="6">No hay repuestos disponibles</td>
-      </tr>
-    }
-  </tbody>
-</table>
+    </div>
+  </div>
 
-<!-- Paginación simple -->
-@if (totalPages > 1) {
-  <div>
-    @for (page of [].constructor(totalPages); track $index) {
-      <button 
-        (click)="goToPage($index)"
-        [disabled]="$index === currentPage">
-        {{ $index + 1 }}
-      </button>
+  <!-- Cards de repuestos -->
+  <div class="cards-container">
+    @for (part of parts; track $index) {
+      <div class="part-card">
+        <div class="card-header">
+          <div class="part-icon">🔩</div>
+          <div class="part-info">
+            <h3 class="part-name">{{ part.partCatalog.name }}</h3>
+            <p class="part-compatibility">{{ part.phone.brand }} {{ part.phone.model }}</p>
+          </div>
+          <span class="part-id">#{{ part.id }}</span>
+        </div>
+        
+        <div class="card-body">
+          <div class="compatibility-section">
+            <div class="device-compatibility">
+              <div class="device-icon">📱</div>
+              <div class="device-info">
+                <h4>Dispositivo Compatible</h4>
+                <p>{{ part.phone.brand }} {{ part.phone.model }}</p>
+              </div>
+            </div>
+            
+            <div class="part-details">
+              <div class="detail-item">
+                <span class="detail-label">
+                  <span class="detail-icon">🏷️</span>
+                  Repuesto
+                </span>
+                <span class="detail-value">{{ part.partCatalog.name }}</span>
+              </div>
+              
+              <div class="detail-item">
+                <span class="detail-label">
+                  <span class="detail-icon">📋</span>
+                  ID Repuesto
+                </span>
+                <span class="detail-value">#{{ part.id }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        @if (admin) {
+          <div class="card-actions">
+            <button class="btn-edit" (click)="update(part.id)">
+              <span class="btn-icon">✏️</span>
+              Editar
+            </button>
+            <button class="btn-delete" (click)="delete(part)">
+              <span class="btn-icon">🗑️</span>
+              Eliminar
+            </button>
+          </div>
+        }
+      </div>
+    }
+    
+    @if (parts.length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <h3>No hay repuestos disponibles</h3>
+        <p>Comienza agregando repuestos al inventario</p>
+        @if (admin) {
+          <button class="btn-primary" (click)="create()">
+            <span class="btn-icon">➕</span>
+            Agregar Repuesto
+          </button>
+        }
+      </div>
     }
   </div>
-}
+
+  <!-- Paginación -->
+  @if (totalPages > 1) {
+    <div class="pagination-container">
+      <div class="pagination">
+        @for (page of [].constructor(totalPages); track $index) {
+          <button 
+            class="pagination-btn"
+            [class.active]="$index === currentPage"
+            (click)="goToPage($index)"
+            [disabled]="$index === currentPage">
+            {{ $index + 1 }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>
 

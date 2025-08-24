@@ -69,11 +69,11 @@ export class PartListComponent {
     }
   
     create(): void {
-      this.router.navigate(['/parts/new']);
+      this.router.navigate(['/dashboard/parts/new']);
     }
   
     update(id: number): void {
-      this.router.navigate(['/parts/edit', id]);
+      this.router.navigate(['/dashboard/parts/edit', id]);
     }
     delete(part: Part): void {
       Swal.fire({
