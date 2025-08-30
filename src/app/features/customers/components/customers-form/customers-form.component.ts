@@ -65,7 +65,7 @@ export class CustomersFormComponent implements OnInit {
       this.customerService.createCustomer(customer).subscribe(() => {
         Swal.fire({
           icon: 'success',
-          title: 'Cliente agregada',
+          title: 'Cliente agregado',
           text: 'El cliente se ha agregado correctamente.'
         });
         this.router.navigate(['/dashboard/customers']);
