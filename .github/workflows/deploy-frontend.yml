@@ -25,7 +25,7 @@ jobs:
     
     - name: Build Angular PWA
       run: |
-        npm run build --configuration production
+        npm run build --prod
         echo "Build completed successfully"
     
     - name: Login to Docker Hub
