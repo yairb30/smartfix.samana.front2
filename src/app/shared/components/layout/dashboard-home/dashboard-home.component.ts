@@ -6,6 +6,7 @@ import { PhoneService } from '../../../../features/phones/services/phone.service
 import { RepairService } from '../../../../features/repairs/services/repair.service';
 import { Repair } from '../../../../shared/models/repair';
 import { forkJoin } from 'rxjs';
+import { Phone } from '../../../models/phone';
 
 interface RepairsByStatus {
   pending: number;
@@ -33,7 +34,7 @@ interface RecentActivity {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard-home.component.html',
-  styleUrl: './dashboard-home.component.css'
+  styleUrls: ['./dashboard-home.component.css']
 })
 export class DashboardHomeComponent {
 
@@ -148,7 +149,7 @@ export class DashboardHomeComponent {
     });
   }
 
-  private analyzeRepairsData(repairs: Repair[], phones: any[]): void {
+  private analyzeRepairsData(repairs: Repair[], phones: Phone[]): void {
     // Analizar reparaciones por estado
     this.repairsByStatus = {
       pending: repairs.filter(r => r.state === 'Pendiente').length,
