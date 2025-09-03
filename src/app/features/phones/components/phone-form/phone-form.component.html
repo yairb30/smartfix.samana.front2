@@ -7,17 +7,7 @@
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="phone-form">
-      <div class="device-preview">
-        <div class="device-mockup">
-          <div class="device-screen">
-            <div class="device-info">
-              <h3>{{ form.get('brand')?.value || 'Marca' }}</h3>
-              <p>{{ form.get('model')?.value || 'Modelo' }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+  
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">

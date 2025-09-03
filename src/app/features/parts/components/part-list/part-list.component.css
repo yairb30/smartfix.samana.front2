@@ -176,18 +176,6 @@
   flex-direction: column;
   gap: 1.5rem;
 }
-
-.device-compatibility {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f0fdff;
-  border-radius: 8px;
-  border: 1px solid #cffafe;
-  border-left: 4px solid #06b6d4;
-}
-
 .device-icon {
   font-size: 2rem;
   background: linear-gradient(135deg, #06b6d4, #0891b2);
@@ -400,11 +388,6 @@
 
   .part-details {
     grid-template-columns: 1fr;
-  }
-
-  .device-compatibility {
-    flex-direction: column;
-    text-align: center;
   }
 
   .card-actions {

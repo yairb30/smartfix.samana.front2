@@ -32,7 +32,6 @@
         <div class="card-header">
           <div class="repair-info">
             <h3 class="repair-title">{{ repair.customer.name }} {{ repair.customer.lastname }}</h3>
-            <span class="repair-id">#{{ repair.id }}</span>
           </div>
           <div class="status-badge" [class]="'status-' + repair.state.toLowerCase().replace(' ', '-')">
             {{ repair.state }}

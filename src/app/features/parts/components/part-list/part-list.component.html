@@ -35,19 +35,10 @@
             <h3 class="part-name">{{ part.partCatalog.name }}</h3>
             <p class="part-compatibility">{{ part.phone.brand }} {{ part.phone.model }}</p>
           </div>
-          <span class="part-id">#{{ part.id }}</span>
         </div>
         
         <div class="card-body">
           <div class="compatibility-section">
-            <div class="device-compatibility">
-              <div class="device-icon">📱</div>
-              <div class="device-info">
-                <h4>Dispositivo Compatible</h4>
-                <p>{{ part.phone.brand }} {{ part.phone.model }}</p>
-              </div>
-            </div>
-            
             <div class="part-details">
               <div class="detail-item">
                 <span class="detail-label">
@@ -55,14 +46,6 @@
                   Repuesto
                 </span>
                 <span class="detail-value">{{ part.partCatalog.name }}</span>
-              </div>
-              
-              <div class="detail-item">
-                <span class="detail-label">
-                  <span class="detail-icon">📋</span>
-                  ID Repuesto
-                </span>
-                <span class="detail-value">#{{ part.id }}</span>
               </div>
             </div>
           </div>

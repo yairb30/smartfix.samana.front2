@@ -88,17 +88,6 @@
   border: 1px solid #e2e8f0;
 }
 
-.device-mockup {
-  width: 180px;
-  height: 320px;
-  background: linear-gradient(135deg, #1f2937, #111827);
-  border-radius: 25px;
-  padding: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  position: relative;
-  animation: float 3s ease-in-out infinite;
-}
-
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -106,30 +95,6 @@
   50% {
     transform: translateY(-10px);
   }
-}
-
-.device-mockup::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 4px;
-  background: #374151;
-  border-radius: 2px;
-}
-
-.device-mockup::after {
-  content: '';
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 4px;
-  background: #374151;
-  border-radius: 2px;
 }
 
 .device-screen {
