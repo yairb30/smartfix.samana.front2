@@ -8,12 +8,13 @@ import { CommonModule } from '@angular/common';
 import { Customer } from '../../../../shared/models/customer';
 import { Phone } from '../../../../shared/models/phone';
 import { AuthService } from '../../../../core/services/auth.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-repair',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './repair-list.component.html',
   styleUrl: './repair-list.component.css',
 })
@@ -28,7 +29,6 @@ export class RepairListComponent implements OnInit {
 
   searchControl = new FormControl('');
   currentPage = 0;
-  pageSize = 4;
   totalPages = 0;
 
   ngOnInit(): void {

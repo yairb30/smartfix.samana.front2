@@ -1,0 +1,134 @@
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+  background: #e5e7eb;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #f9fafb;
+}
+
+.pagination-btn.first-page,
+.pagination-btn.last-page {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.pagination-btn.first-page:hover:not(:disabled),
+.pagination-btn.last-page:hover:not(:disabled) {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.pagination-btn.previous-page,
+.pagination-btn.next-page {
+  background: #3b82f6;
+  border-color: #2563eb;
+  color: white;
+}
+
+.pagination-btn.previous-page:hover:not(:disabled),
+.pagination-btn.next-page:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #1d4ed8;
+}
+
+.pagination-btn.previous-page:disabled,
+.pagination-btn.next-page:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-color: #e2e8f0;
+}
+
+.current-page-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  margin: 0 0.5rem;
+}
+
+.page-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .pagination {
+    padding: 0.5rem 1rem;
+    gap: 0.25rem;
+  }
+  
+  .pagination-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .current-page-indicator {
+    padding: 0 0.5rem;
+    margin: 0 0.25rem;
+  }
+  
+  .page-info {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-btn.first-page,
+  .pagination-btn.last-page {
+    display: none;
+  }
+  
+  .current-page-indicator {
+    padding: 0 0.25rem;
+  }
+}

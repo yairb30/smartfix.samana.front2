@@ -8,12 +8,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-part',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './part-list.component.html',
   styleUrl: './part-list.component.css'
 })
@@ -29,7 +30,6 @@ export class PartListComponent {
   
     searchControl = new FormControl('');
     currentPage = 0;
-    pageSize = 4;
     totalPages = 0;
   
     ngOnInit(): void {

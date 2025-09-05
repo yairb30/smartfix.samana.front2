@@ -83,19 +83,9 @@
   </div>
 
   <!-- Paginación -->
-  @if (totalPages > 1) {
-    <div class="pagination-container">
-      <div class="pagination">
-        @for (page of [].constructor(totalPages); track $index) {
-          <button 
-            class="pagination-btn"
-            [class.active]="$index === currentPage"
-            (click)="goToPage($index)"
-            [disabled]="$index === currentPage">
-            {{ $index + 1 }}
-          </button>
-        }
-      </div>
-    </div>
-  }
+  <app-pagination 
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    (pageChange)="goToPage($event)">
+  </app-pagination>
 </div>

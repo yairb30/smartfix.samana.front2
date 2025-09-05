@@ -6,12 +6,13 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
+import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-customers-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './customers-list.component.html',
   styleUrl: './customers-list.component.css',
 })
@@ -24,7 +25,6 @@ export class CustomersListComponent implements OnInit {
 
   searchControl = new FormControl('');
   currentPage = 0;
-  pageSize = 4;
   totalPages = 0;
 
   ngOnInit(): void {
