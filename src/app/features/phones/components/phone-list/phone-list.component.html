@@ -37,21 +37,6 @@
           </div>
         </div>
         
-        <div class="card-body">
-          <div class="device-preview">
-            <div class="device-specs">
-              <div class="spec-item">
-                <span class="spec-label">Marca</span>
-                <span class="spec-value">{{ phone.brand }}</span>
-              </div>
-              <div class="spec-item">
-                <span class="spec-label">Modelo</span>
-                <span class="spec-value">{{ phone.model }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         @if(admin) {
           <div class="card-actions">
             <button class="btn-edit" (click)="update(phone.id)">

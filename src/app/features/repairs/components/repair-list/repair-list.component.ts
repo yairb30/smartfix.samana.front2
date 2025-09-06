@@ -3,7 +3,7 @@ import { RepairService } from '../../services/repair.service';
 import { Router, RouterModule } from '@angular/router';
 import { Repair } from '../../../../shared/models/repair';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, startWith, switchMap, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Customer } from '../../../../shared/models/customer';
 import { Phone } from '../../../../shared/models/phone';
@@ -35,9 +35,9 @@ export class RepairListComponent implements OnInit {
     // Búsqueda reactiva
     this.searchControl.valueChanges
       .pipe(
-        startWith(''),
         debounceTime(400),
         distinctUntilChanged(),
+        tap(() => (this.currentPage = 0)), // reset página con cada búsqueda
         switchMap((keyword) =>
           this.repairService.getRepairsPage(this.currentPage, keyword || '')
         )
@@ -77,7 +77,7 @@ export class RepairListComponent implements OnInit {
   delete(repair: Repair): void {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `¿Quieres eliminar la reparación?`,
+      text: `¿Quieres eliminar la reparación ${repair.phone.brand} ${repair.phone.model}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Sí, eliminar',

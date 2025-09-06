@@ -4,7 +4,13 @@ import { CustomerService } from '../../services/customers.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import Swal from 'sweetalert2';
@@ -12,7 +18,12 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-customers-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, PaginationComponent],
+  imports: [
+    RouterModule,
+    CommonModule,
+    ReactiveFormsModule,
+    PaginationComponent,
+  ],
   templateUrl: './customers-list.component.html',
   styleUrl: './customers-list.component.css',
 })
@@ -31,9 +42,9 @@ export class CustomersListComponent implements OnInit {
     // Búsqueda reactiva
     this.searchControl.valueChanges
       .pipe(
-        startWith(''),
         debounceTime(400),
         distinctUntilChanged(),
+        tap(() => (this.currentPage = 0)), // reset página con cada búsqueda
         switchMap((keyword) =>
           this.customerService.getCustomersPage(this.currentPage, keyword || '')
         )
@@ -42,7 +53,6 @@ export class CustomersListComponent implements OnInit {
         this.customers = data.content;
         this.totalPages = data.totalPages;
       });
-
     // Cargar clientes sin filtro al inicio
     this.loadCustomers();
   }
@@ -70,7 +80,7 @@ export class CustomersListComponent implements OnInit {
     this.router.navigate(['/dashboard/customers/edit', id]);
   }
   delete(customer: Customer): void {
-      Swal.fire({
+    Swal.fire({
       title: '¿Estás seguro?',
       text: `¿Quieres eliminar a ${customer.name} ${customer.lastname}?`,
       icon: 'warning',
