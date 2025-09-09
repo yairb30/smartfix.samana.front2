@@ -7,12 +7,14 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
-  startWith,
   switchMap,
   tap,
+  finalize,
 } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import { LoadingService } from '../../../../shared/services/loading.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,6 +25,7 @@ import Swal from 'sweetalert2';
     CommonModule,
     ReactiveFormsModule,
     PaginationComponent,
+    SpinnerComponent,
   ],
   templateUrl: './customers-list.component.html',
   styleUrl: './customers-list.component.css',
@@ -31,8 +34,12 @@ export class CustomersListComponent implements OnInit {
   private customerService = inject(CustomerService);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
 
   customers: Customer[] = [];
+  isLoading = false;
+  isSearching = false;
+  isDeleting = false;
 
   searchControl = new FormControl('');
   currentPage = 0;
@@ -44,9 +51,13 @@ export class CustomersListComponent implements OnInit {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(),
-        tap(() => (this.currentPage = 0)), // reset página con cada búsqueda
+        tap(() => {
+          this.currentPage = 0;
+          this.isSearching = true;
+        }),
         switchMap((keyword) =>
           this.customerService.getCustomersPage(this.currentPage, keyword || '')
+            .pipe(finalize(() => this.isSearching = false))
         )
       )
       .subscribe((data) => {
@@ -59,8 +70,11 @@ export class CustomersListComponent implements OnInit {
 
   loadCustomers(): void {
     const keyword = this.searchControl.value || '';
+    this.isLoading = true;
+    
     this.customerService
       .getCustomersPage(this.currentPage, keyword)
+      .pipe(finalize(() => this.isLoading = false))
       .subscribe((data) => {
         this.customers = data.content;
         this.totalPages = data.totalPages;
@@ -89,14 +103,17 @@ export class CustomersListComponent implements OnInit {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.customerService.deleteCustomer(customer.id).subscribe(() => {
-          this.loadCustomers();
-          Swal.fire({
-            title: 'Eliminado',
-            text: 'Cliente eliminado con éxito.',
-            icon: 'success',
+        this.isDeleting = true;
+        this.customerService.deleteCustomer(customer.id)
+          .pipe(finalize(() => this.isDeleting = false))
+          .subscribe(() => {
+            this.loadCustomers();
+            Swal.fire({
+              title: 'Eliminado',
+              text: 'Cliente eliminado con éxito.',
+              icon: 'success',
+            });
           });
-        });
       }
     });
   }

@@ -175,6 +175,24 @@
   box-shadow: none;
 }
 
+.form-input:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+}
+
+.form-input:disabled:hover {
+  border-color: #d1d5db;
+  transform: none;
+}
+
+.register-link a.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .button-icon {
   font-size: 1.2rem;
 }

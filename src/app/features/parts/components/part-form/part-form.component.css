@@ -6,6 +6,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(248, 250, 252, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
 }
 
 /* Card del formulario */
@@ -84,6 +100,68 @@
   background: linear-gradient(135deg, #f0fdff, #cffafe);
   border-radius: 16px;
   border: 1px solid #67e8f9;
+}
+
+/* Preview Section */
+.preview-section {
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f0fdff, #cffafe);
+  border-radius: 16px;
+  border: 1px solid #67e8f9;
+  position: relative;
+}
+
+.preview-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+  border-radius: 16px 16px 0 0;
+}
+
+.part-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 300px;
+}
+
+.preview-card .preview-icon {
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+}
+
+.preview-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0e7490;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.preview-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
 }
 
 .preview-card {
@@ -273,6 +351,18 @@
   border-color: #cbd5e1;
 }
 
+.form-select:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  border-color: #d1d5db;
+}
+
+.form-select:disabled:hover {
+  border-color: #d1d5db;
+  transform: none;
+}
+
 .form-select option {
   padding: 0.75rem;
   background: white;
@@ -431,6 +521,20 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+}
+
+.btn-cancel:disabled {
+  background: #f9fafb;
+  color: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+  border-color: #e5e7eb;
+}
+
+.btn-cancel:disabled:hover {
+  background: #f9fafb;
+  color: #d1d5db;
+  transform: none;
 }
 
 .btn-icon {

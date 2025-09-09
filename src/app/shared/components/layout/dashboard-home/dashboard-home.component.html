@@ -1,213 +1,262 @@
-
 <!-- Contenido principal -->
 <div class="dashboard-container">
-  <main class="main-content">
-    <!-- Header del Dashboard -->
-    <div class="dashboard-header">
-      <div class="header-content">
-        <h1 class="dashboard-title">
-          <span class="title-icon">📊</span>
-            SmartFix Samaná
-        </h1>
-        <p class="dashboard-subtitle">Panel de control y estadísticas del sistema</p>
-      </div>
-      <div class="header-date">
-        <span class="date-icon">📅</span>
-        <span>{{ currentDate | date:'fullDate' }}</span>
-      </div>
+  @if (isLoadingDashboard) {
+    <div class="loading-overlay">
+      <app-spinner 
+        size="large" 
+        message="Cargando dashboard..."
+        color="primary">
+      </app-spinner>
     </div>
-
-    <!-- Tarjetas de Resumen General -->
-    <div class="summary-grid">
-      <div class="summary-card customers">
-        <div class="card-header">
-          <div class="card-icon">👥</div>
-          <div class="card-info">
-            <h3>Clientes</h3>
-            <p class="card-count">{{ totalCustomers }}</p>
-          </div>
+  } @else {
+    <main class="main-content">
+      <!-- Header del Dashboard -->
+      <div class="dashboard-header">
+        <div class="header-content">
+          <h1 class="dashboard-title">
+            <span class="title-icon">📊</span>
+              SmartFix Samaná
+          </h1>
+          <p class="dashboard-subtitle">Panel de control y estadísticas del sistema</p>
         </div>
-        <div class="card-footer">
-          <span class="status-text">Total registrados</span>
-          <span class="trend-indicator positive">↗️ +{{ newCustomersThisMonth }}</span>
-        </div>
-      </div>
-
-      <div class="summary-card phones">
-        <div class="card-header">
-          <div class="card-icon">📱</div>
-          <div class="card-info">
-            <h3>Dispositivos</h3>
-            <p class="card-count">{{ totalPhones }}</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span class="status-text">Modelos registrados</span>
-          <span class="trend-indicator neutral">📊 Catálogo</span>
+        <div class="header-date">
+          <span class="date-icon">📅</span>
+          <span>{{ currentDate | date:'fullDate' }}</span>
         </div>
       </div>
 
-      <div class="summary-card repairs">
-        <div class="card-header">
-          <div class="card-icon">🛠️</div>
-          <div class="card-info">
-            <h3>Reparaciones</h3>
-            <p class="card-count">{{ totalRepairs }}</p>
+      <!-- Tarjetas de Resumen General -->
+      <div class="summary-grid">
+        @if (isLoadingStats) {
+          <div class="stats-loading">
+            <app-spinner 
+              size="medium" 
+              message="Cargando estadísticas..."
+              color="primary">
+            </app-spinner>
           </div>
-        </div>
-        <div class="card-footer">
-          <span class="status-text">Total procesadas</span>
-          <span class="trend-indicator positive">↗️ +{{ repairsThisMonth }}</span>
-        </div>
-      </div>
-
-      <div class="summary-card parts">
-        <div class="card-header">
-          <div class="card-icon">🔩</div>
-          <div class="card-info">
-            <h3>Repuestos</h3>
-            <p class="card-count">{{ totalParts }}</p>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span class="status-text">En inventario</span>
-          <span class="trend-indicator neutral">📦 Stock</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección de Estadísticas del Mes -->
-    <div class="monthly-stats">
-      <div class="stats-header">
-        <h2 class="stats-title">
-          <span class="stats-icon">📈</span>
-          Resumen del Último Mes
-        </h2>
-        <div class="stats-period">
-          <span class="period-icon">🗓️</span>
-          <span>{{ currentMonth }}</span>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <!-- Reparaciones por Estado -->
-        <div class="stat-card repairs-status">
-          <div class="stat-header">
-            <h3>Reparaciones por Estado</h3>
-            <span class="stat-icon">📊</span>
-          </div>
-          <div class="stat-content">
-            <div class="status-item">
-              <div class="status-indicator pending"></div>
-              <span class="status-label">Pendientes</span>
-              <span class="status-count">{{ repairsByStatus.pending || 0 }}</span>
+        } @else {
+          <div class="summary-card customers">
+            <div class="card-header">
+              <div class="card-icon">👥</div>
+              <div class="card-info">
+                <h3>Clientes</h3>
+                <p class="card-count">{{ totalCustomers }}</p>
+              </div>
             </div>
-            <div class="status-item">
-              <div class="status-indicator in-progress"></div>
-              <span class="status-label">En Proceso</span>
-              <span class="status-count">{{ repairsByStatus.inProgress || 0 }}</span>
-            </div>
-            <div class="status-item">
-              <div class="status-indicator completed"></div>
-              <span class="status-label">Completadas</span>
-              <span class="status-count">{{ repairsByStatus.completed || 0 }}</span>
-            </div>
-            <div class="status-item">
-              <div class="status-indicator delivered"></div>
-              <span class="status-label">Entregadas</span>
-              <span class="status-count">{{ repairsByStatus.delivered || 0 }}</span>
+            <div class="card-footer">
+              <span class="status-text">Total registrados</span>
+              <span class="trend-indicator positive">↗️ +{{ newCustomersThisMonth }}</span>
             </div>
           </div>
+
+          <div class="summary-card phones">
+            <div class="card-header">
+              <div class="card-icon">📱</div>
+              <div class="card-info">
+                <h3>Dispositivos</h3>
+                <p class="card-count">{{ totalPhones }}</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-text">Modelos registrados</span>
+              <span class="trend-indicator neutral">📊 Catálogo</span>
+            </div>
+          </div>
+
+          <div class="summary-card repairs">
+            <div class="card-header">
+              <div class="card-icon">🛠️</div>
+              <div class="card-info">
+                <h3>Reparaciones</h3>
+                <p class="card-count">{{ totalRepairs }}</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-text">Total procesadas</span>
+              <span class="trend-indicator positive">↗️ +{{ repairsThisMonth }}</span>
+            </div>
+          </div>
+
+          <div class="summary-card parts">
+            <div class="card-header">
+              <div class="card-icon">🔩</div>
+              <div class="card-info">
+                <h3>Repuestos</h3>
+                <p class="card-count">{{ totalParts }}</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-text">En inventario</span>
+              <span class="trend-indicator neutral">📦 Stock</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Sección de Estadísticas del Mes -->
+      <div class="monthly-stats">
+        <div class="stats-header">
+          <h2 class="stats-title">
+            <span class="stats-icon">📈</span>
+            Resumen del Último Mes
+          </h2>
+          <div class="stats-period">
+            <span class="period-icon">🗓️</span>
+            <span>{{ currentMonth }}</span>
+          </div>
         </div>
 
-        <!-- Dispositivos Más Reparados -->
-        <div class="stat-card popular-devices">
-          <div class="stat-header">
-            <h3>Dispositivos Más Reparados</h3>
-            <span class="stat-icon">🏆</span>
+        <div class="stats-grid">
+          <!-- Reparaciones por Estado -->
+          <div class="stat-card repairs-status">
+            <div class="stat-header">
+              <h3>Reparaciones por Estado</h3>
+              <span class="stat-icon">📊</span>
+            </div>
+            <div class="stat-content">
+              @if (isLoadingCharts) {
+                <div class="chart-loading">
+                  <app-spinner 
+                    size="small" 
+                    message="Cargando gráficos..."
+                    color="secondary">
+                  </app-spinner>
+                </div>
+              } @else {
+                <div class="status-item">
+                  <div class="status-indicator pending"></div>
+                  <span class="status-label">Pendientes</span>
+                  <span class="status-count">{{ repairsByStatus.pending || 0 }}</span>
+                </div>
+                <div class="status-item">
+                  <div class="status-indicator in-progress"></div>
+                  <span class="status-label">En Proceso</span>
+                  <span class="status-count">{{ repairsByStatus.inProgress || 0 }}</span>
+                </div>
+                <div class="status-item">
+                  <div class="status-indicator completed"></div>
+                  <span class="status-label">Completadas</span>
+                  <span class="status-count">{{ repairsByStatus.completed || 0 }}</span>
+                </div>
+                <div class="status-item">
+                  <div class="status-indicator delivered"></div>
+                  <span class="status-label">Entregadas</span>
+                  <span class="status-count">{{ repairsByStatus.delivered || 0 }}</span>
+                </div>
+              }
+            </div>
           </div>
-          <div class="stat-content">
-            @for (device of topRepairedDevices; track device.id) {
-              <div class="device-item">
-                <div class="device-info">
-                  <span class="device-icon">📱</span>
-                  <div class="device-details">
-                    <span class="device-name">{{ device.brand }} {{ device.model }}</span>
-                    <span class="device-count">{{ device.repairCount }} reparaciones</span>
+
+          <!-- Dispositivos Más Reparados -->
+          <div class="stat-card popular-devices">
+            <div class="stat-header">
+              <h3>Dispositivos Más Reparados</h3>
+              <span class="stat-icon">🏆</span>
+            </div>
+            <div class="stat-content">
+              @if (isLoadingCharts) {
+                <div class="chart-loading">
+                  <app-spinner 
+                    size="small" 
+                    message="Analizando dispositivos..."
+                    color="secondary">
+                  </app-spinner>
+                </div>
+              } @else {
+                @for (device of topRepairedDevices; track device.id) {
+                  <div class="device-item">
+                    <div class="device-info">
+                      <span class="device-icon">📱</span>
+                      <div class="device-details">
+                        <span class="device-name">{{ device.brand }} {{ device.model }}</span>
+                        <span class="device-count">{{ device.repairCount }} reparaciones</span>
+                      </div>
+                    </div>
+                    <div class="device-progress">
+                      <div class="progress-bar" [style.width.%]="(device.repairCount / maxRepairCount) * 100"></div>
+                    </div>
+                  </div>
+                }
+                @if (topRepairedDevices.length === 0) {
+                  <div class="no-data">
+                    <span class="no-data-icon">📭</span>
+                    <p>No hay datos de reparaciones este mes</p>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Métricas de Rendimiento -->
+          <div class="stat-card performance-metrics">
+            <div class="stat-header">
+              <h3>Métricas de Rendimiento</h3>
+              <span class="stat-icon">⚡</span>
+            </div>
+            <div class="stat-content">
+              @if (isLoadingCharts) {
+                <div class="chart-loading">
+                  <app-spinner 
+                    size="small" 
+                    message="Calculando métricas..."
+                    color="secondary">
+                  </app-spinner>
+                </div>
+              } @else {
+                <div class="metric-item">
+                  <div class="metric-icon">⏱️</div>
+                  <div class="metric-info">
+                    <span class="metric-label">Tiempo Promedio</span>
+                    <span class="metric-value">{{ averageRepairTime }} días</span>
                   </div>
                 </div>
-                <div class="device-progress">
-                  <div class="progress-bar" [style.width.%]="(device.repairCount / maxRepairCount) * 100"></div>
+                <div class="metric-item">
+                  <div class="metric-icon">✅</div>
+                  <div class="metric-info">
+                    <span class="metric-label">Tasa de Éxito</span>
+                    <span class="metric-value">{{ successRate }}%</span>
+                  </div>
                 </div>
-              </div>
-            }
-            @if (topRepairedDevices.length === 0) {
-              <div class="no-data">
-                <span class="no-data-icon">📭</span>
-                <p>No hay datos de reparaciones este mes</p>
-              </div>
-            }
+                <div class="metric-item">
+                  <div class="metric-icon">😊</div>
+                  <div class="metric-info">
+                    <span class="metric-label">Satisfacción</span>
+                    <span class="metric-value">{{ customerSatisfaction }}/5</span>
+                  </div>
+                </div>
+              }
+            </div>
           </div>
-        </div>
 
-        <!-- Métricas de Rendimiento -->
-        <div class="stat-card performance-metrics">
-          <div class="stat-header">
-            <h3>Métricas de Rendimiento</h3>
-            <span class="stat-icon">⚡</span>
-          </div>
-          <div class="stat-content">
-            <div class="metric-item">
-              <div class="metric-icon">⏱️</div>
-              <div class="metric-info">
-                <span class="metric-label">Tiempo Promedio</span>
-                <span class="metric-value">{{ averageRepairTime }} días</span>
-              </div>
+          <!-- Actividad Reciente -->
+          <div class="stat-card recent-activity">
+            <div class="stat-header">
+              <h3>Actividad Reciente</h3>
+              <span class="stat-icon">🔔</span>
             </div>
-            <div class="metric-item">
-              <div class="metric-icon">✅</div>
-              <div class="metric-info">
-                <span class="metric-label">Tasa de Éxito</span>
-                <span class="metric-value">{{ successRate }}%</span>
-              </div>
-            </div>
-            <div class="metric-item">
-              <div class="metric-icon">😊</div>
-              <div class="metric-info">
-                <span class="metric-label">Satisfacción</span>
-                <span class="metric-value">{{ customerSatisfaction }}/5</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actividad Reciente -->
-        <div class="stat-card recent-activity">
-          <div class="stat-header">
-            <h3>Actividad Reciente</h3>
-            <span class="stat-icon">🔔</span>
-          </div>
-          <div class="stat-content">
-            @for (activity of recentActivities; track activity.id) {
-              <div class="activity-item">
-                <div class="activity-icon" [class]="activity.type">
-                  {{ getActivityIcon(activity.type) }}
+            <div class="stat-content">
+              @for (activity of recentActivities; track activity.id) {
+                <div class="activity-item">
+                  <div class="activity-icon" [class]="activity.type">
+                    {{ getActivityIcon(activity.type) }}
+                  </div>
+                  <div class="activity-info">
+                    <span class="activity-text">{{ activity.description }}</span>
+                    <span class="activity-time">{{ activity.timestamp | date:'short':'es' }}</span>
+                  </div>
                 </div>
-                <div class="activity-info">
-                  <span class="activity-text">{{ activity.description }}</span>
-                  <span class="activity-time">{{ activity.timestamp | date:'short':'es' }}</span>
+              }
+              @if (recentActivities.length === 0) {
+                <div class="no-data">
+                  <span class="no-data-icon">🔕</span>
+                  <p>No hay actividad reciente</p>
                 </div>
-              </div>
-            }
-            @if (recentActivities.length === 0) {
-              <div class="no-data">
-                <span class="no-data-icon">🔕</span>
-                <p>No hay actividad reciente</p>
-              </div>
-            }
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
+    </main>
+  }
 </div>

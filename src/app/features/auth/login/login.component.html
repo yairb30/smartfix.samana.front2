@@ -17,6 +17,7 @@
           formControlName="username" 
           class="form-input"
           placeholder="Ingresa tu usuario"
+          [disabled]="isLoading"
         />
       </div>
 
@@ -30,6 +31,7 @@
           formControlName="password" 
           class="form-input"
           placeholder="Ingresa tu contraseña"
+          [disabled]="isLoading"
         />
       </div>
 
@@ -40,15 +42,32 @@
         </div>
       }
 
-      <button type="submit" class="login-button" [disabled]="loginForm.invalid">
-        <span class="button-icon">🚀</span>
-        Iniciar sesión
+      <button 
+        type="submit" 
+        class="login-button" 
+        [disabled]="loginForm.invalid || isLoading">
+        @if (isLoading) {
+          <app-spinner 
+            size="small" 
+            color="white" 
+            [showMessage]="false">
+          </app-spinner>
+          Iniciando sesión...
+        } @else {
+          <span class="button-icon">🚀</span>
+          Iniciar sesión
+        }
       </button>
       
       <div class="login-footer">
         <p class="register-link">
           ¿No tienes cuenta? 
-          <a routerLink="/register" routerLinkActive="active-link">Regístrate aquí</a>
+          <a 
+            routerLink="/register" 
+            routerLinkActive="active-link"
+            [class.disabled]="isLoading">
+            Regístrate aquí
+          </a>
         </p>
       </div>
     </form>

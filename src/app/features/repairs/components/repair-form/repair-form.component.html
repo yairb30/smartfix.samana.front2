@@ -1,142 +1,227 @@
 <div class="form-container">
-  <div class="form-card">
-    <div class="form-header">
-      <div class="form-icon">🛠️</div>
-      <h2 class="form-title">{{ isEditMode ? "Editar Reparación" : "Nueva Reparación" }}</h2>
-      <p class="form-subtitle">{{ isEditMode ? "Actualiza los detalles de la reparación" : "Registra una nueva orden de reparación" }}</p>
+  @if (isLoadingData) {
+    <div class="loading-overlay">
+      <app-spinner 
+        size="large" 
+        message="Cargando datos del formulario..."
+        color="primary">
+      </app-spinner>
     </div>
-
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="repair-form">
-      <!-- Información del cliente y dispositivo -->
-      <div class="info-section">
-        <h3 class="section-title">
-          <span class="section-icon">👤</span>
-          Información del Cliente y Dispositivo
-        </h3>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="customerId">
-              <span class="label-icon">👥</span>
-              Cliente
-            </label>
-            <select id="customerId" formControlName="customerId" class="form-select" required>
-              <option value="" disabled>Selecciona un cliente</option>
-              @for (customer of customers; track customer.id) {
-                <option [value]="customer.id">
-                  {{ customer.name }} {{ customer.lastname }}
-                </option>
-              }
-            </select>
-            @if (form.get('customerId')?.invalid && form.get('customerId')?.touched) {
-              <div class="error-message">
-                <span class="error-icon">⚠️</span>
-                El cliente es requerido
-              </div>
-            }
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="phoneId">
-              <span class="label-icon">📱</span>
-              Dispositivo
-            </label>
-            <select id="phoneId" formControlName="phoneId" class="form-select" required>
-              <option value="" disabled>Selecciona un dispositivo</option>
-              @for (phone of phones; track phone.id) {
-                <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
-              }
-            </select>
-            @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
-              <div class="error-message">
-                <span class="error-icon">⚠️</span>
-                El dispositivo es requerido
-              </div>
-            }
-          </div>
-        </div>
+  } @else if (isLoading) {
+    <div class="loading-overlay">
+      <app-spinner 
+        size="large" 
+        message="Cargando datos de la reparación..."
+        color="primary">
+      </app-spinner>
+    </div>
+  } @else {
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-icon">🛠️</div>
+        <h2 class="form-title">{{ isEditMode ? "Editar Reparación" : "Nueva Reparación" }}</h2>
+        <p class="form-subtitle">{{ isEditMode ? "Actualiza los detalles de la reparación" : "Registra una nueva orden de reparación" }}</p>
       </div>
 
-      <!-- Detalles de la reparación -->
-      <div class="info-section">
-        <h3 class="section-title">
-          <span class="section-icon">🔧</span>
-          Detalles de la Reparación
-        </h3>
-        
-        <div class="form-group">
-          <label class="form-label" for="fault">
-            <span class="label-icon">⚠️</span>
-            Descripción de la Falla
-          </label>
-          <textarea 
-            id="fault" 
-            formControlName="fault" 
-            class="form-textarea"
-            placeholder="Describe detalladamente el problema del dispositivo..."
-            rows="4"
-          ></textarea>
-          @if (form.get('fault')?.invalid && form.get('fault')?.touched) {
-            <div class="error-message">
-              <span class="error-icon">⚠️</span>
-              La descripción de la falla es requerida
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="repair-form">
+        <!-- Información del cliente y dispositivo -->
+        <div class="info-section">
+          <h3 class="section-title">
+            <span class="section-icon">👤</span>
+            Información del Cliente y Dispositivo
+          </h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="customerId">
+                <span class="label-icon">👥</span>
+                Cliente
+              </label>
+              <select 
+                id="customerId" 
+                formControlName="customerId" 
+                class="form-select" 
+                required
+                [disabled]="isSubmitting">
+                <option value="" disabled>Selecciona un cliente</option>
+                @for (customer of customers; track customer.id) {
+                  <option [value]="customer.id">
+                    {{ customer.name }} {{ customer.lastname }}
+                  </option>
+                }
+              </select>
+              @if (form.get('customerId')?.invalid && form.get('customerId')?.touched) {
+                <div class="error-message">
+                  <span class="error-icon">⚠️</span>
+                  El cliente es requerido
+                </div>
+              }
             </div>
-          }
+
+            <div class="form-group">
+              <label class="form-label" for="phoneId">
+                <span class="label-icon">📱</span>
+                Dispositivo
+              </label>
+              <select 
+                id="phoneId" 
+                formControlName="phoneId" 
+                class="form-select" 
+                required
+                [disabled]="isSubmitting">
+                <option value="" disabled>Selecciona un dispositivo</option>
+                @for (phone of phones; track phone.id) {
+                  <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
+                }
+              </select>
+              @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
+                <div class="error-message">
+                  <span class="error-icon">⚠️</span>
+                  El dispositivo es requerido
+                </div>
+              }
+            </div>
+          </div>
         </div>
 
-        <div class="form-row">
+        <!-- Vista previa de la reparación -->
+        @if (getSelectedCustomer() && getSelectedPhone()) {
+          <div class="preview-section">
+            <h3 class="section-title">
+              <span class="section-icon">👁️</span>
+              Vista Previa de la Reparación
+            </h3>
+            <div class="repair-preview">
+              <div class="preview-card">
+                <div class="customer-info">
+                  <div class="preview-icon">👤</div>
+                  <div class="preview-details">
+                    <h4>{{ getSelectedCustomer()?.name }} {{ getSelectedCustomer()?.lastname }}</h4>
+                    <p>Cliente</p>
+                  </div>
+                </div>
+                <div class="arrow">➡️</div>
+                <div class="device-info">
+                  <div class="preview-icon">📱</div>
+                  <div class="preview-details">
+                    <h4>{{ getSelectedPhone()?.brand }} {{ getSelectedPhone()?.model }}</h4>
+                    <p>Dispositivo</p>
+                  </div>
+                </div>
+                @if (getSelectedState()) {
+                  <div class="arrow">➡️</div>
+                  <div class="status-info">
+                    <div class="preview-icon" [style.background-color]="getSelectedState()?.color">📊</div>
+                    <div class="preview-details">
+                      <h4>{{ getSelectedState()?.label }}</h4>
+                      <p>Estado</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Detalles de la reparación -->
+        <div class="info-section">
+          <h3 class="section-title">
+            <span class="section-icon">🔧</span>
+            Detalles de la Reparación
+          </h3>
+          
           <div class="form-group">
-            <label class="form-label" for="state">
-              <span class="label-icon">📊</span>
-              Estado
+            <label class="form-label" for="fault">
+              <span class="label-icon">⚠️</span>
+              Descripción de la Falla
             </label>
-            <select id="state" formControlName="state" class="form-select" required>
-              <option value="" disabled>Selecciona el estado</option>
-              <option value="Pendiente">🔄 Pendiente</option>
-              <option value="En Proceso">⚙️ En Proceso</option>
-              <option value="Completado">✅ Completado</option>
-              <option value="Entregado">📦 Entregado</option>
-              <option value="Cancelado">❌ Cancelado</option>
-            </select>
-            @if (form.get('state')?.invalid && form.get('state')?.touched) {
+            <textarea 
+              id="fault" 
+              formControlName="fault" 
+              class="form-textarea"
+              placeholder="Describe detalladamente el problema del dispositivo..."
+              rows="4"
+              [disabled]="isSubmitting"
+            ></textarea>
+            @if (form.get('fault')?.invalid && form.get('fault')?.touched) {
               <div class="error-message">
                 <span class="error-icon">⚠️</span>
-                El estado es requerido
+                La descripción de la falla es requerida
               </div>
             }
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="date">
-              <span class="label-icon">📅</span>
-              Fecha de Ingreso
-            </label>
-            <input 
-              id="date" 
-              type="date" 
-              formControlName="date" 
-              class="form-input"
-            />
-            @if (form.get('date')?.invalid && form.get('date')?.touched) {
-              <div class="error-message">
-                <span class="error-icon">⚠️</span>
-                La fecha es requerida
-              </div>
-            }
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="state">
+                <span class="label-icon">📊</span>
+                Estado
+              </label>
+              <select 
+                id="state" 
+                formControlName="state" 
+                class="form-select" 
+                required
+                [disabled]="isSubmitting">
+                <option value="" disabled>Selecciona el estado</option>
+                @for (state of repairStates; track state.value) {
+                  <option [value]="state.value">{{ state.label }}</option>
+                }
+              </select>
+              @if (form.get('state')?.invalid && form.get('state')?.touched) {
+                <div class="error-message">
+                  <span class="error-icon">⚠️</span>
+                  El estado es requerido
+                </div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="date">
+                <span class="label-icon">📅</span>
+                Fecha de Ingreso
+              </label>
+              <input 
+                id="date" 
+                type="date" 
+                formControlName="date" 
+                class="form-input"
+                [max]="todayDate"
+                [disabled]="isSubmitting"
+              />
+              @if (form.get('date')?.invalid && form.get('date')?.touched) {
+                <div class="error-message">
+                  <span class="error-icon">⚠️</span>
+                  La fecha es requerida
+                </div>
+              }
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" (click)="cancel()">
-          <span class="btn-icon">❌</span>
-          Cancelar
-        </button>
-        <button type="submit" class="btn-submit" [disabled]="form.invalid">
-          <span class="btn-icon">{{ isEditMode ? "✏️" : "💾" }}</span>
-          {{ isEditMode ? "Actualizar" : "Guardar" }}
-        </button>
-      </div>
-    </form>
-  </div>
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn-cancel" 
+            (click)="cancel()"
+            [disabled]="isSubmitting">
+            <span class="btn-icon">❌</span>
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn-submit" 
+            [disabled]="form.invalid || isSubmitting || !isFormReady">
+            @if (isSubmitting) {
+              <app-spinner size="small" color="white" [showMessage]="false"></app-spinner>
+              {{ isEditMode ? "Actualizando..." : "Guardando..." }}
+            } @else {
+              <span class="btn-icon">{{ isEditMode ? "✏️" : "💾" }}</span>
+              {{ isEditMode ? "Actualizar" : "Guardar" }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
 </div>

@@ -12,8 +12,13 @@
           [formControl]="searchControl" 
           placeholder="Buscar clientes..." 
           class="search-input"
+          [disabled]="isLoading"
         />
-        <span class="search-icon">🔍</span>
+        @if (isSearching) {
+          <app-spinner size="small" [showMessage]="false"></app-spinner>
+        } @else {
+          <span class="search-icon">🔍</span>
+        }
       </div>
       
       @if(admin) {
@@ -27,62 +32,82 @@
 
   <!-- Cards de clientes -->
   <div class="cards-container">
-    @for (customer of customers; track $index) {
-      <div class="customer-card">
-        <div class="card-header">
-          <div class="customer-info">
-            <h3 class="customer-name">{{ customer.name }} {{ customer.lastname }}</h3>
-          </div>
-          <div class="customer-avatar">
-            <span class="avatar-icon">👤</span>
-          </div>
-        </div>
-        
-        <div class="card-body">
-          <div class="info-row">
-            <span class="info-label">
-              <span class="info-icon">📞</span>
-              Teléfono
-            </span>
-            <span class="info-value">{{ customer.phone }}</span>
+    @if (isLoading) {
+      <div class="loading-container">
+        <app-spinner 
+          size="large" 
+          message="Cargando clientes..."
+          color="primary">
+        </app-spinner>
+      </div>
+    } @else {
+      @for (customer of customers; track $index) {
+        <div class="customer-card">
+          <div class="card-header">
+            <div class="customer-info">
+              <h3 class="customer-name">{{ customer.name }} {{ customer.lastname }}</h3>
+            </div>
+            <div class="customer-avatar">
+              <span class="avatar-icon">👤</span>
+            </div>
           </div>
           
-          <div class="info-row">
-            <span class="info-label">
-              <span class="info-icon">✉️</span>
-              Email
-            </span>
-            <span class="info-value">{{ customer.email }}</span>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">
+                <span class="info-icon">📞</span>
+                Teléfono
+              </span>
+              <span class="info-value">{{ customer.phone }}</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="info-label">
+                <span class="info-icon">✉️</span>
+                Email
+              </span>
+              <span class="info-value">{{ customer.email }}</span>
+            </div>
           </div>
+          
+          @if(admin) {
+            <div class="card-actions">
+              <button 
+                class="btn-edit" 
+                (click)="update(customer.id)"
+                [disabled]="isDeleting">
+                <span class="btn-icon">✏️</span>
+                Editar
+              </button>
+              <button 
+                class="btn-delete" 
+                (click)="delete(customer)"
+                [disabled]="isDeleting">
+                @if (isDeleting) {
+                  <app-spinner size="small" color="white" [showMessage]="false"></app-spinner>
+                } @else {
+                  <span class="btn-icon">🗑️</span>
+                  Eliminar
+                }
+              </button>
+            </div>
+          }
         </div>
-        
-        @if(admin) {
-          <div class="card-actions">
-            <button class="btn-edit" (click)="update(customer.id)">
-              <span class="btn-icon">✏️</span>
-              Editar
+      }
+      
+      @if (customers.length === 0 && !isLoading) {
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>No hay clientes disponibles</h3>
+          <p>Comienza agregando tu primer cliente</p>
+          @if(admin) {
+            <button class="btn-primary" (click)="create()">
+              <span class="btn-icon">➕</span>
+              Agregar Cliente
             </button>
-            <button class="btn-delete" (click)="delete(customer)">
-              <span class="btn-icon">🗑️</span>
-              Eliminar
-            </button>
-          </div>
-        }
-      </div>
-    }
-    
-    @if (customers.length === 0) {
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>No hay clientes disponibles</h3>
-        <p>Comienza agregando tu primer cliente</p>
-        @if(admin) {
-          <button class="btn-primary" (click)="create()">
-            <span class="btn-icon">➕</span>
-            Agregar Cliente
-          </button>
-        }
-      </div>
+          }
+        </div>
+      }
     }
   </div>
 

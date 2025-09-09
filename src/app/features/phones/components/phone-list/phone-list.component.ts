@@ -6,13 +6,15 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
-  startWith,
   switchMap,
   tap,
+  finalize,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import { LoadingService } from '../../../../shared/services/loading.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,6 +25,7 @@ import Swal from 'sweetalert2';
     CommonModule,
     ReactiveFormsModule,
     PaginationComponent,
+    SpinnerComponent,
   ],
   templateUrl: './phone-list.component.html',
   styleUrl: './phone-list.component.css',
@@ -31,8 +34,12 @@ export class PhoneListComponent {
   private phoneService = inject(PhoneService);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
 
   phones: Phone[] = [];
+  isLoading = false;
+  isSearching = false;
+  isDeleting = false;
 
   searchControl = new FormControl('');
   currentPage = 0;
@@ -44,9 +51,13 @@ export class PhoneListComponent {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(),
-        tap(() => (this.currentPage = 0)), // reset página con cada búsqueda
+        tap(() => {
+          this.currentPage = 0;
+          this.isSearching = true;
+        }),
         switchMap((keyword) =>
           this.phoneService.getPhonesPage(this.currentPage, keyword || '')
+            .pipe(finalize(() => this.isSearching = false))
         )
       )
       .subscribe((data) => {
@@ -60,8 +71,11 @@ export class PhoneListComponent {
 
   loadPhones(): void {
     const keyword = this.searchControl.value || '';
+    this.isLoading = true;
+    
     this.phoneService
       .getPhonesPage(this.currentPage, keyword)
+      .pipe(finalize(() => this.isLoading = false))
       .subscribe((data) => {
         this.phones = data.content;
         this.totalPages = data.totalPages;
@@ -90,13 +104,17 @@ export class PhoneListComponent {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.phoneService.deletePhone(phone.id).subscribe(() => {
-          Swal.fire({
-            title: 'Eliminado',
-            text: 'Teléfono eliminado con éxito.',
-            icon: 'success',
+        this.isDeleting = true;
+        this.phoneService.deletePhone(phone.id)
+          .pipe(finalize(() => this.isDeleting = false))
+          .subscribe(() => {
+            this.loadPhones();
+            Swal.fire({
+              title: 'Eliminado',
+              text: 'Teléfono eliminado con éxito.',
+              icon: 'success',
+            });
           });
-        });
       }
     });
   }

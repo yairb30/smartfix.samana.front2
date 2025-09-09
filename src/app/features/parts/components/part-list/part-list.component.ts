@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PartService } from '../../services/parts.service';
 import { Router, RouterModule } from '@angular/router';
 import { Part } from '../../../../shared/models/part';
@@ -11,10 +11,13 @@ import {
   startWith,
   switchMap,
   tap,
+  finalize,
 } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import { LoadingService } from '../../../../shared/services/loading.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -25,18 +28,23 @@ import Swal from 'sweetalert2';
     CommonModule,
     ReactiveFormsModule,
     PaginationComponent,
+    SpinnerComponent,
   ],
   templateUrl: './part-list.component.html',
   styleUrl: './part-list.component.css',
 })
-export class PartListComponent {
+export class PartListComponent implements OnInit {
   private partService = inject(PartService);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private loadingService = inject(LoadingService);
 
-  parts!: Part[];
+  parts: Part[] = [];
   customers!: Customer[];
   phones!: Phone[];
+  isLoading = false;
+  isSearching = false;
+  isDeleting = false;
 
   searchControl = new FormControl('');
   currentPage = 0;
@@ -48,25 +56,31 @@ export class PartListComponent {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(),
-        tap(() => (this.currentPage = 0)), // reset página con cada búsqueda
+        tap(() => {
+          this.currentPage = 0;
+          this.isSearching = true;
+        }),
         switchMap((keyword) =>
           this.partService.getPartsPage(this.currentPage, keyword || '')
+            .pipe(finalize(() => this.isSearching = false))
         )
       )
-      .subscribe((data) => {
+      .subscribe((data: any) => {
         this.parts = data.content;
         this.totalPages = data.totalPages;
       });
-
     // Cargar repuestos sin filtro al inicio
     this.loadParts();
   }
 
   loadParts(): void {
     const keyword = this.searchControl.value || '';
+    this.isLoading = true;
+    
     this.partService
       .getPartsPage(this.currentPage, keyword)
-      .subscribe((data) => {
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe((data: any) => {
         this.parts = data.content;
         this.totalPages = data.totalPages;
       });
@@ -84,6 +98,7 @@ export class PartListComponent {
   update(id: number): void {
     this.router.navigate(['/dashboard/parts/edit', id]);
   }
+  
   delete(part: Part): void {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -94,12 +109,17 @@ export class PartListComponent {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.partService.deletePart(part.id).subscribe(() => {
-          Swal.fire('Eliminado', 'El repuesto ha sido eliminado.', 'success');
-        });
+        this.isDeleting = true;
+        this.partService.deletePart(part.id)
+          .pipe(finalize(() => this.isDeleting = false))
+          .subscribe(() => {
+            this.loadParts();
+            Swal.fire('Eliminado', 'El repuesto ha sido eliminado.', 'success');
+          });
       }
     });
   }
+  
   get admin(): boolean {
     return this.authService.isAdmin();
   }

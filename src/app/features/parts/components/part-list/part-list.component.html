@@ -12,8 +12,13 @@
           [formControl]="searchControl" 
           placeholder="Buscar por celular o repuesto..." 
           class="search-input"
+          [disabled]="isLoading"
         />
-        <span class="search-icon">🔍</span>
+        @if (isSearching) {
+          <app-spinner size="small" [showMessage]="false"></app-spinner>
+        } @else {
+          <span class="search-icon">🔍</span>
+        }
       </div>
       
       @if (admin) {
@@ -27,43 +32,63 @@
 
   <!-- Cards de repuestos -->
   <div class="cards-container">
-    @for (part of parts; track $index) {
-      <div class="part-card">
-        <div class="card-header">
-          <div class="part-icon">🔩</div>
-          <div class="part-info">
-            <h3 class="part-name">{{ part.partCatalog.name }}</h3>
-            <p class="part-compatibility">{{ part.phone.brand }} {{ part.phone.model }}</p>
+    @if (isLoading) {
+      <div class="loading-container">
+        <app-spinner 
+          size="large" 
+          message="Cargando repuestos..."
+          color="primary">
+        </app-spinner>
+      </div>
+    } @else {
+      @for (part of parts; track $index) {
+        <div class="part-card">
+          <div class="card-header">
+            <div class="part-icon">🔩</div>
+            <div class="part-info">
+              <h3 class="part-name">{{ part.partCatalog.name }}</h3>
+              <p class="part-compatibility">{{ part.phone.brand }} {{ part.phone.model }}</p>
+            </div>
           </div>
+          
+          @if (admin) {
+            <div class="card-actions">
+              <button 
+                class="btn-edit" 
+                (click)="update(part.id)"
+                [disabled]="isDeleting">
+                <span class="btn-icon">✏️</span>
+                Editar
+              </button>
+              <button 
+                class="btn-delete" 
+                (click)="delete(part)"
+                [disabled]="isDeleting">
+                @if (isDeleting) {
+                  <app-spinner size="small" color="white" [showMessage]="false"></app-spinner>
+                } @else {
+                  <span class="btn-icon">🗑️</span>
+                  Eliminar
+                }
+              </button>
+            </div>
+          }
         </div>
-        
-        @if (admin) {
-          <div class="card-actions">
-            <button class="btn-edit" (click)="update(part.id)">
-              <span class="btn-icon">✏️</span>
-              Editar
+      }
+      
+      @if (parts.length === 0 && !isLoading) {
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>No hay repuestos disponibles</h3>
+          <p>Comienza agregando repuestos al inventario</p>
+          @if (admin) {
+            <button class="btn-primary" (click)="create()">
+              <span class="btn-icon">➕</span>
+              Agregar Repuesto
             </button>
-            <button class="btn-delete" (click)="delete(part)">
-              <span class="btn-icon">🗑️</span>
-              Eliminar
-            </button>
-          </div>
-        }
-      </div>
-    }
-    
-    @if (parts.length === 0) {
-      <div class="empty-state">
-        <div class="empty-icon">📦</div>
-        <h3>No hay repuestos disponibles</h3>
-        <p>Comienza agregando repuestos al inventario</p>
-        @if (admin) {
-          <button class="btn-primary" (click)="create()">
-            <span class="btn-icon">➕</span>
-            Agregar Repuesto
-          </button>
-        }
-      </div>
+          }
+        </div>
+      }
     }
   </div>
 
@@ -74,4 +99,3 @@
     (pageChange)="goToPage($event)">
   </app-pagination>
 </div>
-

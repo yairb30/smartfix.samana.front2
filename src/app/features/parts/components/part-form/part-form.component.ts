@@ -12,12 +12,16 @@ import { PartCatalogService } from '../../services/parts-catalog.service';
 import { PhoneService } from '../../../phones/services/phone.service';
 import { Phone } from '../../../../shared/models/phone';
 import { PartCatalog } from '../../../../shared/models/part-catalog';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
+import { LoadingService } from '../../../../shared/services/loading.service';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-part-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent],
   templateUrl: './part-form.component.html',
   styleUrl: './part-form.component.css',
 })
@@ -28,10 +32,14 @@ export class PartFormComponent {
   private partService = inject(PartService);
   private phoneService = inject(PhoneService);
   private partCatalogService = inject(PartCatalogService);
+  private loadingService = inject(LoadingService);
 
   form!: FormGroup;
   partId!: number;
   isEditMode = false;
+  isLoading = false;
+  isLoadingData = false;
+  isSubmitting = false;
 
   phones: Phone[] = [];
   partsCatalog: PartCatalog[] = [];
@@ -42,11 +50,8 @@ export class PartFormComponent {
       partCatalogId: ['', Validators.required],
     });
 
-    // Cargar celulares y repuestos del catálogo
-    this.phoneService.getPhones().subscribe((data) => (this.phones = data));
-    this.partCatalogService
-      .getPartsCatalog()
-      .subscribe((data) => (this.partsCatalog = data));
+    // Cargar datos iniciales
+    this.loadInitialData();
 
     // Modo edición
     this.route.paramMap.subscribe((params) => {
@@ -54,43 +59,91 @@ export class PartFormComponent {
       if (idParam) {
         this.partId = +idParam;
         this.isEditMode = true;
-        this.partService.getPartById(this.partId).subscribe((part) => {
+        this.loadPartData();
+      }
+    });
+  }
+
+  private loadInitialData(): void {
+    this.isLoadingData = true;
+    
+    // Cargar celulares y repuestos del catálogo simultáneamente
+    forkJoin({
+      phones: this.phoneService.getPhones(),
+      partsCatalog: this.partCatalogService.getPartsCatalog()
+    })
+    .pipe(finalize(() => this.isLoadingData = false))
+    .subscribe({
+      next: ({ phones, partsCatalog }) => {
+        this.phones = phones;
+        this.partsCatalog = partsCatalog;
+      },
+      error: (error) => {
+        console.error('Error loading initial data:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al cargar los datos iniciales'
+        });
+      }
+    });
+  }
+
+  private loadPartData(): void {
+    this.isLoading = true;
+    this.partService.getPartById(this.partId)
+      .pipe(finalize(() => this.isLoading = false))
+      .subscribe({
+        next: (part) => {
           if (part) {
             this.form.patchValue({
               phoneId: part.phone.id,
               partCatalogId: part.partCatalog.id,
             });
           }
-        });
-      }
-    });
+        },
+        error: (error) => {
+          console.error('Error loading part data:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar los datos del repuesto'
+          });
+        }
+      });
   }
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.isSubmitting) return;
 
     const partDto = this.form.value;
+    this.isSubmitting = true;
 
     if (this.isEditMode && this.partId != null) {
-      this.partService.updatePart(this.partId, partDto).subscribe(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Repuesto actualizado',
-          text: 'El repuesto se ha actualizado correctamente.',
+      this.partService.updatePart(this.partId, partDto)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Repuesto actualizado',
+            text: 'El repuesto se ha actualizado correctamente.',
+          });
+          this.router.navigate(['/dashboard/parts']);
         });
-        this.router.navigate(['/dashboard/parts']);
-      });
     } else {
-      this.partService.createPart(partDto).subscribe(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Repuesto agregado',
-          text: 'El repuesto se ha agregado correctamente.',
+      this.partService.createPart(partDto)
+        .pipe(finalize(() => this.isSubmitting = false))
+        .subscribe(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Repuesto agregado',
+            text: 'El repuesto se ha agregado correctamente.',
+          });
+          this.router.navigate(['/dashboard/parts']);
         });
-        this.router.navigate(['/dashboard/parts']);
-      });
     }
   }
+
   cancel(): void {
     this.router.navigate(['/dashboard/parts']);
   }
@@ -104,5 +157,9 @@ export class PartFormComponent {
   getSelectedPart(): PartCatalog | undefined {
     const partCatalogId = this.form.get('partCatalogId')?.value;
     return this.partsCatalog.find((part) => part.id === partCatalogId);
+  }
+
+  get isFormReady(): boolean {
+    return !this.isLoadingData && this.phones.length > 0 && this.partsCatalog.length > 0;
   }
 }

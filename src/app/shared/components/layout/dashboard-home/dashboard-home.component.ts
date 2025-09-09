@@ -5,7 +5,10 @@ import { PartService } from '../../../../features/parts/services/parts.service';
 import { PhoneService } from '../../../../features/phones/services/phone.service';
 import { RepairService } from '../../../../features/repairs/services/repair.service';
 import { Repair } from '../../../../shared/models/repair';
+import { SpinnerComponent } from '../../spinner/spinner.component';
+import { LoadingService } from '../../../services/loading.service';
 import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs';
 import { Phone } from '../../../models/phone';
 
 interface RepairsByStatus {
@@ -32,11 +35,16 @@ interface RecentActivity {
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SpinnerComponent],
   templateUrl: './dashboard-home.component.html',
   styleUrls: ['./dashboard-home.component.css']
 })
 export class DashboardHomeComponent {
+
+  // Estados de carga
+  isLoadingDashboard = false;
+  isLoadingStats = false;
+  isLoadingCharts = false;
 
   // Datos básicos
   totalCustomers: number = 0;
@@ -73,7 +81,8 @@ export class DashboardHomeComponent {
     private customerService: CustomerService,
     private phoneService: PhoneService,
     private repairService: RepairService,
-    private partService: PartService
+    private partService: PartService,
+    private loadingService: LoadingService
   ) {
     this.setCurrentMonth();
   }
@@ -91,61 +100,88 @@ export class DashboardHomeComponent {
   }
 
   private loadAllData(): void {
-    // Cargar datos básicos
-    this.loadCustomerCount();
-    this.loadPhonesCount();
-    this.loadRepairsCount();
-    this.loadPartsCount();
+    this.isLoadingDashboard = true;
+    
+    // Cargar datos básicos de forma simultánea
+    this.loadBasicStats();
     
     // Cargar estadísticas avanzadas
     this.loadRepairsData();
     this.generateMockData();
   }
 
-  loadCustomerCount(): void {
-    this.customerService.getCountCustomers().subscribe({
-      next: (count) => {
-        this.totalCustomers = count;
-        this.newCustomersThisMonth = Math.floor(count * 0.15); // Simulado: 15% del mes actual
+  private loadBasicStats(): void {
+    this.isLoadingStats = true;
+    
+    forkJoin({
+      customers: this.customerService.getCountCustomers(),
+      phones: this.phoneService.getCountPhones(),
+      repairs: this.repairService.getCountRepairs(),
+      parts: this.partService.getParts()
+    })
+    .pipe(finalize(() => {
+      this.isLoadingStats = false;
+      this.isLoadingDashboard = false;
+    }))
+    .subscribe({
+      next: ({ customers, phones, repairs, parts }) => {
+        this.totalCustomers = customers;
+        this.totalPhones = phones;
+        this.totalRepairs = repairs;
+        this.totalParts = parts.length;
+        
+        // Calcular datos del mes actual (simulado)
+        this.newCustomersThisMonth = Math.floor(customers * 0.15);
+        this.repairsThisMonth = Math.floor(repairs * 0.25);
       },
-      error: (err) => console.error('Error cargando clientes:', err)
+      error: (error) => {
+        console.error('Error loading dashboard stats:', error);
+      }
     });
+  }
+
+  // Métodos individuales mantenidos para compatibilidad pero ahora usan loadBasicStats()
+  loadCustomerCount(): void {
+    if (!this.isLoadingStats) {
+      this.loadBasicStats();
+    }
   }
 
   loadPhonesCount(): void {
-    this.phoneService.getCountPhones().subscribe({
-      next: (count) => this.totalPhones = count,
-      error: (err) => console.error('Error cargando teléfonos:', err)
-    });
+    if (!this.isLoadingStats) {
+      this.loadBasicStats();
+    }
   }
 
   loadRepairsCount(): void {
-    this.repairService.getCountRepairs().subscribe({
-      next: (count) => {
-        this.totalRepairs = count;
-        this.repairsThisMonth = Math.floor(count * 0.25); // Simulado: 25% del mes actual
-      },
-      error: (err) => console.error('Error cargando reparaciones:', err)
-    });
+    if (!this.isLoadingStats) {
+      this.loadBasicStats();
+    }
   }
 
   loadPartsCount(): void {
-    this.partService.getParts().subscribe({
-      next: (parts) => this.totalParts = parts.length,
-      error: (err) => console.error('Error cargando repuestos:', err)
-    });
+    if (!this.isLoadingStats) {
+      this.loadBasicStats();
+    }
   }
 
   private loadRepairsData(): void {
+    this.isLoadingCharts = true;
+    
     // Cargar todas las reparaciones para análisis
     forkJoin({
       repairs: this.repairService.getRepairs(),
       phones: this.phoneService.getPhones()
-    }).subscribe({
+    })
+    .pipe(finalize(() => this.isLoadingCharts = false))
+    .subscribe({
       next: ({ repairs, phones }) => {
         this.analyzeRepairsData(repairs, phones);
       },
-      error: (err) => console.error('Error cargando datos de reparaciones:', err)
+      error: (err) => {
+        console.error('Error cargando datos de reparaciones:', err);
+        this.isLoadingCharts = false;
+      }
     });
   }
 
