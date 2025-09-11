@@ -1,10 +1,5 @@
 import { Component, inject, Inject } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { DashboardComponent } from "./shared/components/layout/dashboard/dashboard.component";
-import { HttpClientModule } from '@angular/common/http';
-import { AuthService } from './core/services/auth.service';
-import { LoginComponent } from './features/auth/login/login.component';
-import { SidebarComponent } from './shared/components/layout/sidebar/sidebar.component';
+import { RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({

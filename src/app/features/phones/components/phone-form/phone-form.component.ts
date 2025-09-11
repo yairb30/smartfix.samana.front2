@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PhoneService } from '../../services/phone.service';
 import { Phone } from '../../../../shared/models/phone';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -22,7 +21,6 @@ export class PhoneFormComponent implements OnInit {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     private phoneService = inject(PhoneService);
-    private loadingService = inject(LoadingService);
   
     form!: FormGroup;
     phoneId!: number;

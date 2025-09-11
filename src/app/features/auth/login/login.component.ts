@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginRequest } from '../../../shared/models/login-request';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../shared/services/loading.service';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -25,7 +24,6 @@ export class LoginComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loadingService: LoadingService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],

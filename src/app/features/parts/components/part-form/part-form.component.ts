@@ -13,7 +13,6 @@ import { PhoneService } from '../../../phones/services/phone.service';
 import { Phone } from '../../../../shared/models/phone';
 import { PartCatalog } from '../../../../shared/models/part-catalog';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -26,13 +25,13 @@ import Swal from 'sweetalert2';
   styleUrl: './part-form.component.css',
 })
 export class PartFormComponent {
+
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private partService = inject(PartService);
   private phoneService = inject(PhoneService);
   private partCatalogService = inject(PartCatalogService);
-  private loadingService = inject(LoadingService);
 
   form!: FormGroup;
   partId!: number;

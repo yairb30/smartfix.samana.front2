@@ -5,7 +5,7 @@ import { CustomerService } from '../../services/customers.service';
 import { Customer } from '../../../../shared/models/customer';
 import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
+
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -22,7 +22,6 @@ export class CustomersFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private customerService = inject(CustomerService);
-  private loadingService = inject(LoadingService);
 
   form!: FormGroup;
   customerId!: number;

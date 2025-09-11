@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -34,7 +33,6 @@ export class PhoneListComponent {
   private phoneService = inject(PhoneService);
   private router = inject(Router);
   private authService = inject(AuthService);
-  private loadingService = inject(LoadingService);
 
   phones: Phone[] = [];
   isLoading = false;

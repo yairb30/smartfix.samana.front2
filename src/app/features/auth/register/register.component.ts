@@ -10,15 +10,15 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
 
-  form!: FormGroup;
+  registerform: FormGroup;
   
 
   constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
-     this.form = this.fb.group({
+     this.registerform = this.fb.group({
        email: ['', [Validators.required, Validators.email]],
        username: ['', [Validators.required, Validators.minLength(4)]],
        password: ['', [Validators.required]],
@@ -27,16 +27,16 @@ export class RegisterComponent {
   }
 
   register(): void {
-    if (this.form.invalid) return;
+    if (this.registerform.invalid) return;
 
-    this.authService.register(this.form.value).subscribe({
+    this.authService.register(this.registerform.value).subscribe({
       next: () => {
         Swal.fire({
           icon: 'success',
           title: 'Registro exitoso',
           text: 'El usuario ha sido registrado con éxito.',
         });
-        this.form.reset();
+        this.registerform.reset();
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -46,7 +46,7 @@ export class RegisterComponent {
           text: 'No se pudo registrar',
         });
         console.error(err);
-        this.form.reset();
+        this.registerform.reset();
       }
     });
   }

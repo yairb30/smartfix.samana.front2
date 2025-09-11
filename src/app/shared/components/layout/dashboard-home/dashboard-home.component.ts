@@ -6,7 +6,6 @@ import { PhoneService } from '../../../../features/phones/services/phone.service
 import { RepairService } from '../../../../features/repairs/services/repair.service';
 import { Repair } from '../../../../shared/models/repair';
 import { SpinnerComponent } from '../../spinner/spinner.component';
-import { LoadingService } from '../../../services/loading.service';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs';
 import { Phone } from '../../../models/phone';
@@ -82,7 +81,6 @@ export class DashboardHomeComponent {
     private phoneService: PhoneService,
     private repairService: RepairService,
     private partService: PartService,
-    private loadingService: LoadingService
   ) {
     this.setCurrentMonth();
   }

@@ -13,7 +13,6 @@ import { PhoneService } from '../../../phones/services/phone.service';
 import { Customer } from '../../../../shared/models/customer';
 import { Phone } from '../../../../shared/models/phone';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -32,7 +31,6 @@ export class RepairFormComponent implements OnInit {
   private repairService = inject(RepairService);
   private customerService = inject(CustomerService);
   private phoneService = inject(PhoneService);
-  private loadingService = inject(LoadingService);
 
   form!: FormGroup;
   repairId!: number;

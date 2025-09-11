@@ -8,7 +8,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
-  startWith,
   switchMap,
   tap,
   finalize,
@@ -17,7 +16,6 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth.service';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { LoadingService } from '../../../../shared/services/loading.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -37,7 +35,6 @@ export class PartListComponent implements OnInit {
   private partService = inject(PartService);
   private router = inject(Router);
   private authService = inject(AuthService);
-  private loadingService = inject(LoadingService);
 
   parts: Part[] = [];
   customers!: Customer[];
