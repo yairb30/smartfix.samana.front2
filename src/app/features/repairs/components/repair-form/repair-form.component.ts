@@ -13,14 +13,15 @@ import { PhoneService } from '../../../phones/services/phone.service';
 import { Customer } from '../../../../shared/models/customer';
 import { Phone } from '../../../../shared/models/phone';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { forkJoin } from 'rxjs';
+import { AutocompleteComponent } from '../../../../shared/components/autocomplete/autocomplete.component';
+import { forkJoin, map } from 'rxjs';
 import { finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-repair-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, AutocompleteComponent],
   templateUrl: './repair-form.component.html',
   styleUrl: './repair-form.component.css',
 })
@@ -38,9 +39,9 @@ export class RepairFormComponent implements OnInit {
   isLoading = false;
   isLoadingData = false;
   isSubmitting = false;
-  
-  customers: Customer[] = [];
-  phones: Phone[] = [];
+
+  selectedCustomer: Customer | null = null;
+  selectedPhone: Phone | null = null;
 
   // Estados de reparación disponibles
   repairStates = [
@@ -60,9 +61,6 @@ export class RepairFormComponent implements OnInit {
       date: ['', Validators.required],
     });
 
-    // Cargar datos iniciales
-    this.loadInitialData();
-
     // Modo edición
     this.route.paramMap.subscribe((params) => {
       const idParam = params.get('id');
@@ -74,29 +72,36 @@ export class RepairFormComponent implements OnInit {
     });
   }
 
-  private loadInitialData(): void {
-    this.isLoadingData = true;
-    
-    // Cargar clientes y celulares simultáneamente
-    forkJoin({
-      customers: this.customerService.getCustomers(),
-      phones: this.phoneService.getPhones()
-    })
-    .pipe(finalize(() => this.isLoadingData = false))
-    .subscribe({
-      next: ({ customers, phones }) => {
-        this.customers = customers;
-        this.phones = phones;
-      },
-      error: (error) => {
-        console.error('Error loading initial data:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al cargar los datos iniciales'
-        });
-      }
-    });
+  // Search function for customers autocomplete
+  searchCustomers = (keyword: string) => {
+    return this.customerService.getCustomersPage(0, keyword);
+  };
+
+  // Search function for phones autocomplete
+  searchPhones = (keyword: string) => {
+    return this.phoneService.getPhonesPage(0, keyword);
+  };
+
+  // Format display for customer
+  formatCustomerDisplay = (customer: Customer) => {
+    return `${customer.name} ${customer.lastname} - ${customer.phone}`;
+  };
+
+  // Format display for phone
+  formatPhoneDisplay = (phone: Phone) => {
+    return `${phone.brand} ${phone.model}`;
+  };
+
+  // Handle customer selection
+  onCustomerSelected(customer: Customer | null): void {
+    this.selectedCustomer = customer;
+    this.form.patchValue({ customerId: customer?.id || null });
+  }
+
+  // Handle phone selection
+  onPhoneSelected(phone: Phone | null): void {
+    this.selectedPhone = phone;
+    this.form.patchValue({ phoneId: phone?.id || null });
   }
 
   private loadRepairData(): void {
@@ -106,6 +111,10 @@ export class RepairFormComponent implements OnInit {
       .subscribe({
         next: (repair) => {
           if (repair) {
+            // Set selected items for autocomplete display
+            this.selectedCustomer = repair.customer;
+            this.selectedPhone = repair.phone;
+
             this.form.patchValue({
               customerId: repair.customer.id,
               phoneId: repair.phone.id,
@@ -163,14 +172,12 @@ export class RepairFormComponent implements OnInit {
   }
 
   // Métodos helper para el template
-  getSelectedCustomer(): Customer | undefined {
-    const customerId = this.form.get('customerId')?.value;
-    return this.customers.find((customer) => customer.id === customerId);
+  getSelectedCustomer(): Customer | null {
+    return this.selectedCustomer;
   }
 
-  getSelectedPhone(): Phone | undefined {
-    const phoneId = this.form.get('phoneId')?.value;
-    return this.phones.find((phone) => phone.id === phoneId);
+  getSelectedPhone(): Phone | null {
+    return this.selectedPhone;
   }
 
   getSelectedState(): any {
@@ -179,7 +186,7 @@ export class RepairFormComponent implements OnInit {
   }
 
   get isFormReady(): boolean {
-    return !this.isLoadingData && this.customers.length > 0 && this.phones.length > 0;
+    return !this.isLoadingData && !this.isLoading;
   }
 
   get todayDate(): string {

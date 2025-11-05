@@ -1,4 +1,4 @@
-name: Deploy Angular PWA to EC2
+name: Deploy Angular to EC2
 
 on:
   push:

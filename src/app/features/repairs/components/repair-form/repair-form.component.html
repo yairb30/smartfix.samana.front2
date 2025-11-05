@@ -33,23 +33,16 @@
           
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="customerId">
-                <span class="label-icon">👥</span>
-                Cliente
-              </label>
-              <select 
-                id="customerId" 
-                formControlName="customerId" 
-                class="form-select" 
-                required
-                [disabled]="isSubmitting">
-                <option value="" disabled>Selecciona un cliente</option>
-                @for (customer of customers; track customer.id) {
-                  <option [value]="customer.id">
-                    {{ customer.name }} {{ customer.lastname }}
-                  </option>
-                }
-              </select>
+              <app-autocomplete
+                [label]="'Cliente'"
+                [icon]="'👥'"
+                [placeholder]="'Buscar cliente por nombre, apellido o teléfono...'"
+                [searchFunction]="searchCustomers"
+                [formatDisplayFn]="formatCustomerDisplay"
+                [disabled]="isSubmitting"
+                [required]="true"
+                (itemSelected)="onCustomerSelected($event)">
+              </app-autocomplete>
               @if (form.get('customerId')?.invalid && form.get('customerId')?.touched) {
                 <div class="error-message">
                   <span class="error-icon">⚠️</span>
@@ -59,21 +52,16 @@
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="phoneId">
-                <span class="label-icon">📱</span>
-                Dispositivo
-              </label>
-              <select 
-                id="phoneId" 
-                formControlName="phoneId" 
-                class="form-select" 
-                required
-                [disabled]="isSubmitting">
-                <option value="" disabled>Selecciona un dispositivo</option>
-                @for (phone of phones; track phone.id) {
-                  <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
-                }
-              </select>
+              <app-autocomplete
+                [label]="'Dispositivo'"
+                [icon]="'📱'"
+                [placeholder]="'Buscar dispositivo por marca o modelo...'"
+                [searchFunction]="searchPhones"
+                [formatDisplayFn]="formatPhoneDisplay"
+                [disabled]="isSubmitting"
+                [required]="true"
+                (itemSelected)="onPhoneSelected($event)">
+              </app-autocomplete>
               @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
                 <div class="error-message">
                   <span class="error-icon">⚠️</span>

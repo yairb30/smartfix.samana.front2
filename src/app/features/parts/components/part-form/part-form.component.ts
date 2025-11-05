@@ -13,14 +13,15 @@ import { PhoneService } from '../../../phones/services/phone.service';
 import { Phone } from '../../../../shared/models/phone';
 import { PartCatalog } from '../../../../shared/models/part-catalog';
 import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs';
+import { AutocompleteComponent } from '../../../../shared/components/autocomplete/autocomplete.component';
+import { forkJoin, of } from 'rxjs';
+import { finalize, map } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-part-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerComponent, AutocompleteComponent],
   templateUrl: './part-form.component.html',
   styleUrl: './part-form.component.css',
 })
@@ -40,7 +41,8 @@ export class PartFormComponent {
   isLoadingData = false;
   isSubmitting = false;
 
-  phones: Phone[] = [];
+  selectedPhone: Phone | null = null;
+  selectedPartCatalog: PartCatalog | null = null;
   partsCatalog: PartCatalog[] = [];
 
   ngOnInit(): void {
@@ -49,8 +51,8 @@ export class PartFormComponent {
       partCatalogId: ['', Validators.required],
     });
 
-    // Cargar datos iniciales
-    this.loadInitialData();
+    // Cargar catálogo de repuestos
+    this.loadPartsCatalog();
 
     // Modo edición
     this.route.paramMap.subscribe((params) => {
@@ -63,29 +65,49 @@ export class PartFormComponent {
     });
   }
 
-  private loadInitialData(): void {
+  // Load parts catalog for dropdown/search
+  private loadPartsCatalog(): void {
     this.isLoadingData = true;
-    
-    // Cargar celulares y repuestos del catálogo simultáneamente
-    forkJoin({
-      phones: this.phoneService.getPhones(),
-      partsCatalog: this.partCatalogService.getPartsCatalog()
-    })
-    .pipe(finalize(() => this.isLoadingData = false))
-    .subscribe({
-      next: ({ phones, partsCatalog }) => {
-        this.phones = phones;
-        this.partsCatalog = partsCatalog;
-      },
-      error: (error) => {
-        console.error('Error loading initial data:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al cargar los datos iniciales'
-        });
-      }
-    });
+
+    this.partCatalogService.getPartsCatalog()
+      .pipe(finalize(() => this.isLoadingData = false))
+      .subscribe({
+        next: (partsCatalog) => {
+          this.partsCatalog = partsCatalog;
+        },
+        error: (error) => {
+          console.error('Error loading parts catalog:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar el catálogo de repuestos'
+          });
+        }
+      });
+  }
+
+  // Search function for phones autocomplete
+  searchPhones = (keyword: string) => {
+    return this.phoneService.getPhonesPage(0, keyword);
+  };
+
+  // Format display for phone
+  formatPhoneDisplay = (phone: Phone) => {
+    return `${phone.brand} ${phone.model}`;
+  };
+
+  // Handle phone selection
+  onPhoneSelected(phone: Phone | null): void {
+    this.selectedPhone = phone;
+    this.form.patchValue({ phoneId: phone?.id || null });
+  }
+
+  // Handle part catalog selection
+  onPartCatalogSelected(event: any): void {
+    const partCatalogId = event.target.value;
+    const selected = this.partsCatalog.find(p => p.id === +partCatalogId);
+    this.selectedPartCatalog = selected || null;
+    this.form.patchValue({ partCatalogId: partCatalogId });
   }
 
   private loadPartData(): void {
@@ -95,6 +117,10 @@ export class PartFormComponent {
       .subscribe({
         next: (part) => {
           if (part) {
+            // Set selected items for display
+            this.selectedPhone = part.phone;
+            this.selectedPartCatalog = part.partCatalog;
+
             this.form.patchValue({
               phoneId: part.phone.id,
               partCatalogId: part.partCatalog.id,
@@ -148,17 +174,15 @@ export class PartFormComponent {
   }
 
   // Métodos helper para el template
-  getSelectedPhone(): Phone | undefined {
-    const phoneId = this.form.get('phoneId')?.value;
-    return this.phones.find((phone) => phone.id === phoneId);
+  getSelectedPhone(): Phone | null {
+    return this.selectedPhone;
   }
 
-  getSelectedPart(): PartCatalog | undefined {
-    const partCatalogId = this.form.get('partCatalogId')?.value;
-    return this.partsCatalog.find((part) => part.id === partCatalogId);
+  getSelectedPart(): PartCatalog | null {
+    return this.selectedPartCatalog;
   }
 
   get isFormReady(): boolean {
-    return !this.isLoadingData && this.phones.length > 0 && this.partsCatalog.length > 0;
+    return !this.isLoadingData && !this.isLoading && this.partsCatalog.length > 0;
   }
 }

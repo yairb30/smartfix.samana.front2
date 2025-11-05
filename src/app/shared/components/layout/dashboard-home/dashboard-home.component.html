@@ -257,6 +257,117 @@
           </div>
         </div>
       </div>
+
+      <!-- Recent Repairs Section -->
+      <div class="recent-repairs-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">🔧</span>
+            Reparaciones Recientes
+          </h2>
+          <a href="/dashboard/repairs" class="view-all-link">
+            Ver todas →
+          </a>
+        </div>
+
+        @if (isLoadingCharts) {
+          <div class="loading-container">
+            <app-spinner
+              size="medium"
+              message="Cargando reparaciones..."
+              color="primary">
+            </app-spinner>
+          </div>
+        } @else {
+          <div class="repairs-grid">
+            @for (repair of recentRepairs; track repair.id) {
+              <div class="repair-card">
+                <div class="repair-header">
+                  <div class="repair-state" [style.background-color]="getStateColor(repair.state)">
+                    <span class="state-icon">{{ getStateIcon(repair.state) }}</span>
+                    <span class="state-text">{{ repair.state }}</span>
+                  </div>
+                  <span class="repair-date">{{ formatDate(repair.date) }}</span>
+                </div>
+
+                <div class="repair-body">
+                  <div class="repair-info">
+                    <div class="info-row">
+                      <span class="info-icon">👤</span>
+                      <span class="info-text">{{ repair.customer.name }} {{ repair.customer.lastname }}</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-icon">📱</span>
+                      <span class="info-text">{{ repair.phone.brand }} {{ repair.phone.model }}</span>
+                    </div>
+                    <div class="info-row fault-row">
+                      <span class="info-icon">⚠️</span>
+                      <span class="info-text fault-text">{{ repair.fault }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="repair-footer">
+                  <a [href]="'/dashboard/repairs/edit/' + repair.id" class="view-repair-link">
+                    Ver detalles →
+                  </a>
+                </div>
+              </div>
+            }
+
+            @if (recentRepairs.length === 0) {
+              <div class="no-data">
+                <span class="no-data-icon">📭</span>
+                <p>No hay reparaciones recientes</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Quick Actions Section -->
+      <div class="quick-actions-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon">⚡</span>
+            Acciones Rápidas
+          </h2>
+        </div>
+
+        <div class="actions-grid">
+          <a href="/dashboard/repairs/new" class="action-card">
+            <div class="action-icon">🛠️</div>
+            <div class="action-content">
+              <h3>Nueva Reparación</h3>
+              <p>Registrar nueva orden de reparación</p>
+            </div>
+          </a>
+
+          <a href="/dashboard/customers/new" class="action-card">
+            <div class="action-icon">👥</div>
+            <div class="action-content">
+              <h3>Nuevo Cliente</h3>
+              <p>Agregar cliente al sistema</p>
+            </div>
+          </a>
+
+          <a href="/dashboard/phones/new" class="action-card">
+            <div class="action-icon">📱</div>
+            <div class="action-content">
+              <h3>Nuevo Dispositivo</h3>
+              <p>Registrar modelo de dispositivo</p>
+            </div>
+          </a>
+
+          <a href="/dashboard/parts/new" class="action-card">
+            <div class="action-icon">🔩</div>
+            <div class="action-content">
+              <h3>Nuevo Repuesto</h3>
+              <p>Agregar repuesto al inventario</p>
+            </div>
+          </a>
+        </div>
+      </div>
     </main>
   }
 </div>

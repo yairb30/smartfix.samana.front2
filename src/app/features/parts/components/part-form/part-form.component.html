@@ -32,21 +32,16 @@
           </h3>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="phoneId">
-                <span class="label-icon">📱</span>
-                Dispositivo Compatible
-              </label>
-              <select 
-                id="phoneId" 
-                formControlName="phoneId" 
-                class="form-select" 
-                required
-                [disabled]="isSubmitting">
-                <option value="" disabled>Selecciona un dispositivo</option>
-                @for (phone of phones; track phone.id) {
-                  <option [value]="phone.id">{{ phone.brand }} {{ phone.model }}</option>
-                }
-              </select>
+              <app-autocomplete
+                [label]="'Dispositivo Compatible'"
+                [icon]="'📱'"
+                [placeholder]="'Buscar dispositivo por marca o modelo...'"
+                [searchFunction]="searchPhones"
+                [formatDisplayFn]="formatPhoneDisplay"
+                [disabled]="isSubmitting"
+                [required]="true"
+                (itemSelected)="onPhoneSelected($event)">
+              </app-autocomplete>
               @if (form.get('phoneId')?.invalid && form.get('phoneId')?.touched) {
                 <div class="error-message">
                   <span class="error-icon">⚠️</span>
@@ -60,12 +55,13 @@
                 <span class="label-icon">🔩</span>
                 Tipo de Repuesto
               </label>
-              <select 
-                id="partCatalogId" 
-                formControlName="partCatalogId" 
-                class="form-select" 
+              <select
+                id="partCatalogId"
+                formControlName="partCatalogId"
+                class="form-select"
                 required
-                [disabled]="isSubmitting">
+                [disabled]="isSubmitting"
+                (change)="onPartCatalogSelected($event)">
                 <option value="" disabled>Selecciona un repuesto</option>
                 @for (partCatalog of partsCatalog; track partCatalog.id) {
                   <option [value]="partCatalog.id">{{ partCatalog.name }}</option>

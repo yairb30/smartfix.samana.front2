@@ -29,6 +29,8 @@ interface RecentActivity {
   type: 'repair' | 'customer' | 'device' | 'part';
   description: string;
   timestamp: Date;
+  entityId?: number;
+  route?: string;
 }
 
 @Component({
@@ -75,6 +77,11 @@ export class DashboardHomeComponent {
 
   // Actividad reciente
   recentActivities: RecentActivity[] = [];
+  recentRepairs: Repair[] = [];
+
+  // Quick stats
+  pendingRepairsCount: number = 0;
+  inProgressRepairsCount: number = 0;
 
   constructor(
     private customerService: CustomerService,
@@ -99,13 +106,12 @@ export class DashboardHomeComponent {
 
   private loadAllData(): void {
     this.isLoadingDashboard = true;
-    
+
     // Cargar datos básicos de forma simultánea
     this.loadBasicStats();
-    
+
     // Cargar estadísticas avanzadas
     this.loadRepairsData();
-    this.generateMockData();
   }
 
   private loadBasicStats(): void {
@@ -192,9 +198,18 @@ export class DashboardHomeComponent {
       delivered: repairs.filter(r => r.state === 'Entregado').length
     };
 
+    // Quick stats
+    this.pendingRepairsCount = this.repairsByStatus.pending;
+    this.inProgressRepairsCount = this.repairsByStatus.inProgress;
+
+    // Get recent repairs (last 5)
+    this.recentRepairs = [...repairs]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+
     // Analizar dispositivos más reparados
     const deviceRepairCount = new Map<number, { device: any, count: number }>();
-    
+
     repairs.forEach(repair => {
       const phoneId = repair.phone.id;
       if (deviceRepairCount.has(phoneId)) {
@@ -218,12 +233,15 @@ export class DashboardHomeComponent {
         repairCount: item.count
       }));
 
-    this.maxRepairCount = this.topRepairedDevices.length > 0 
-      ? this.topRepairedDevices[0].repairCount 
+    this.maxRepairCount = this.topRepairedDevices.length > 0
+      ? this.topRepairedDevices[0].repairCount
       : 1;
 
     // Calcular métricas de rendimiento
     this.calculatePerformanceMetrics(repairs);
+
+    // Generate real activity data from repairs
+    this.generateRecentActivities(repairs);
   }
 
   private calculatePerformanceMetrics(repairs: Repair[]): void {
@@ -239,42 +257,43 @@ export class DashboardHomeComponent {
     this.successRate = Math.round((successfulRepairs / repairs.length) * 100);
   }
 
-  private generateMockData(): void {
-    // Generar actividades recientes simuladas
-    const activities = [
-      {
-        id: 1,
-        type: 'repair' as const,
-        description: 'Nueva reparación registrada - iPhone 13',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 horas atrás
-      },
-      {
-        id: 2,
-        type: 'customer' as const,
-        description: 'Cliente nuevo registrado - María González',
-        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000) // 4 horas atrás
-      },
-      {
-        id: 3,
-        type: 'repair' as const,
-        description: 'Reparación completada - Samsung Galaxy S22',
-        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000) // 6 horas atrás
-      },
-      {
-        id: 4,
-        type: 'device' as const,
-        description: 'Nuevo modelo agregado - Xiaomi Redmi Note 12',
-        timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000) // 8 horas atrás
-      },
-      {
-        id: 5,
-        type: 'part' as const,
-        description: 'Repuesto agregado al inventario - Pantalla LCD',
-        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000) // 12 horas atrás
-      }
-    ];
+  private generateRecentActivities(repairs: Repair[]): void {
+    // Generate activities from recent repairs
+    const activities: RecentActivity[] = [];
 
-    this.recentActivities = activities;
+    // Get recent repairs and create activities
+    const recentRepairs = [...repairs]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 10);
+
+    recentRepairs.forEach((repair, index) => {
+      // Calculate approximate timestamp based on repair date
+      const repairDate = new Date(repair.date);
+
+      let description = '';
+      let type: 'repair' | 'customer' | 'device' | 'part' = 'repair';
+
+      if (repair.state === 'Entregado') {
+        description = `Reparación entregada - ${repair.phone.brand} ${repair.phone.model} (${repair.customer.name} ${repair.customer.lastname})`;
+      } else if (repair.state === 'Completado') {
+        description = `Reparación completada - ${repair.phone.brand} ${repair.phone.model}`;
+      } else if (repair.state === 'En Proceso') {
+        description = `Reparación en proceso - ${repair.phone.brand} ${repair.phone.model}`;
+      } else {
+        description = `Nueva reparación registrada - ${repair.phone.brand} ${repair.phone.model}`;
+      }
+
+      activities.push({
+        id: repair.id,
+        type: type,
+        description: description,
+        timestamp: repairDate,
+        entityId: repair.id,
+        route: `/dashboard/repairs/edit/${repair.id}`
+      });
+    });
+
+    this.recentActivities = activities.slice(0, 5);
   }
 
   getActivityIcon(type: string): string {
@@ -285,5 +304,39 @@ export class DashboardHomeComponent {
       part: '🔩'
     };
     return icons[type as keyof typeof icons] || '📋';
+  }
+
+  getStateColor(state: string): string {
+    const colors: { [key: string]: string } = {
+      'Pendiente': '#f59e0b',
+      'En Proceso': '#3b82f6',
+      'Completado': '#10b981',
+      'Entregado': '#6366f1',
+      'Cancelado': '#ef4444'
+    };
+    return colors[state] || '#6b7280';
+  }
+
+  getStateIcon(state: string): string {
+    const icons: { [key: string]: string } = {
+      'Pendiente': '⏳',
+      'En Proceso': '🔧',
+      'Completado': '✅',
+      'Entregado': '📦',
+      'Cancelado': '❌'
+    };
+    return icons[state] || '📋';
+  }
+
+  formatDate(date: Date): string {
+    const now = new Date();
+    const repairDate = new Date(date);
+    const diffInMs = now.getTime() - repairDate.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) return 'Hoy';
+    if (diffInDays === 1) return 'Ayer';
+    if (diffInDays < 7) return `Hace ${diffInDays} días`;
+    return repairDate.toLocaleDateString('es-ES');
   }
 }
