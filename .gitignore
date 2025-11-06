@@ -40,3 +40,26 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Deployment files (use .example versions as templates)
+docker-compose.yml
+docker-compose.staging.yml
+docker-compose.production.yml
+.env
+.env.local
+.env.production
+.env.staging
+.env.ec2
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+
+# Secrets and credentials
+secrets.json
+credentials.json
+service-account.json
+
+# Local docker overrides
+docker-compose.override.yml
