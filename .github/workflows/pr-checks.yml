@@ -34,6 +34,11 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Install Chrome
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser
+
     - name: Run linter
       run: npm run ng lint || echo "⚠️ Linter not configured"
       continue-on-error: true
